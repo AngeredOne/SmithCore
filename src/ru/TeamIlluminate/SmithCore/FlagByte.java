@@ -16,4 +16,13 @@ public class FlagByte {
         bytes[3] = (byte) (Empty?1:0);
         return bytes;
     }
+
+    public FlagByte getFlags(byte[] bytes)
+    {
+        Disconnect = (boolean)(bytes[0] == 1 ? true:false);
+        Resended = (boolean)(bytes[0] == 1 ? true:false);
+        EndTransmission = (boolean)(bytes[0] == 1 ? true:false);
+        Empty = (boolean)(bytes[0] == 1 ? true:false);
+        return this;
+    }
 }

@@ -21,23 +21,73 @@ class SmithProtocol {
     public void send (Byte[] data)
     {
         packageList = formPackages((data));
+        packageList.get(packageList.size() - 1).flag.EndTransmission = true;
 
-        packageList.forEach(sPack -> {
-
+        for(int i = 0; i < packageList.size(); ++i)
+        {
             try {
 
-                stream.output.write(sPack.getBytes());
+                stream.output.write(packageList.get(i).getBytes());
                 stream.output.flush();
             } catch (IOException e) {
+                //Не ну тут короче ивент хуё-моё
+                errorPackage = i;
                 e.printStackTrace();
             }
-
-        });
+        }
     }
 
-    public void resend() {}
+    public void resend() {
+
+        packageList.get(errorPackage).flag.Resended = true;
+
+        for(int i = errorPackage; i < packageList.size(); ++i)
+        {
+            try {
+                stream.output.write(packageList.get(i).getBytes());
+                stream.output.flush();
+            } catch (IOException e) {
+                //Не ну тут короче ивент хуё-моё
+                errorPackage = i;
+                e.printStackTrace();
+            }
+        }
+
+    }
 
     public byte[] recieve () {
+
+        List<SmithPackage> packeges = new ArrayList<SmithPackage>();
+        boolean isEndedTransmission = false;
+        while (!isEndedTransmission)
+        {
+            byte[] buffer = new byte[64];
+            stream.input.read(buffer);
+            byte[] flagsByte = new byte[4];
+
+            for(int i = 0; i < 4; ++i)
+            {
+                flagsByte[i] = buffer[i];
+            }
+
+            FlagByte flags = new FlagByte().getFlags(flagsByte);
+
+            if(flags.Disconnect)
+            {
+                //Ивент дисконнекта
+                break;
+            }
+            else if(flags.Resended)
+            {
+                //Обработка рисендед, тоже ивент. Формально, на уровне протокола нужно ловить эту шнягу. То есть на уровне протокола сохранять состояние ПОЛУЧЕННЫХ пакеджиков)0)
+            }
+            else if(flags.EndTransmission)
+            {
+                //тут ласт пакедж, вызывает досвидули на уровне метода))0))
+                isEndedTransmission = true;
+            }
+        }
+
         return new byte[]{};
     }
 
