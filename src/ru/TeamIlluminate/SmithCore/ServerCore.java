@@ -3,34 +3,47 @@ package ru.TeamIlluminate.SmithCore;
 import ru.TeamIlluminate.SmithCore.StateManager.codes;
 
 import java.io.IOException;
-import java.net.InetAddress;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.util.List;
 
  class ServerCore {
-    private Socket socket;
+    private ServerSocket serverSocket;
     private List<ServerAgent> agentList;
-    private Validator validator = new Validator();
+    private Validator validator;
     private int timeout;
+    private ClientsListener listener;
+    private boolean isStarted = false;
 
+     //error when createSocket
     public ServerCore (int port, int timeout) {
-       this.timeout = timeout;
-       this.validator = new Validator();
        try {
-          Socket socket = new Socket(InetAddress.getLocalHost(), port);
+           serverSocket = new ServerSocket(port);
+           serverSocket.setSoTimeout(timeout);
        } catch (IOException e) {
            e.printStackTrace();
        }
+       this.validator = new Validator();
+       this.timeout = timeout;
+       this.validator = new Validator();
 
     }
 
+     //needcheckportopening
+     //internetconnection
     public codes start() {
-
-      return null;
+        if (!isStarted) {
+            listener = new ClientsListener();
+            listener.run();
+        }
+        return null;
     }
 
     public void stop() {
-
+        if (isStarted) {
+            listener.isActive = false;
+        }
     }
 
     public void dropAgent(Socket required) {
@@ -46,7 +59,6 @@ import java.util.List;
              agentList.remove(concreteAgent);
           }
        }
-
     }
 
     public ServerAgent getAgent(Socket required) {
@@ -64,8 +76,24 @@ import java.util.List;
       return null;
     }
 
-    private void listen() {
-
+    class ClientsListener extends Thread {
+        public boolean isActive = true;
+        @Override
+        public void run() {
+            while (isActive) {
+                try {
+                    Socket inSocket = serverSocket.accept();
+                    String UID = validator.getUID(inSocket);
+                    ServerAgent newAgent = new ServerAgent(inSocket, UID);
+                    agentList.add(newAgent);
+                    //newagentevent
+                } catch (SocketTimeoutException e) {
+                    //Someone try connect but timeout;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
 }
