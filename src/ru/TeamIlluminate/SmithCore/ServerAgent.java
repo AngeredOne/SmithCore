@@ -5,6 +5,7 @@ import java.util.stream.Stream;
 
  class ServerAgent {
     private Socket socket;
+    public Socket getSocket() {return socket;}
     private Stream stream;
     private SmithProtocol protocol;
     private String UID;
