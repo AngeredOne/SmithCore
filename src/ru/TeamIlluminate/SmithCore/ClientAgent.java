@@ -1,20 +1,50 @@
 package ru.TeamIlluminate.SmithCore;
 
+import java.io.IOException;
 import java.net.Socket;
-import java.util.stream.Stream;
+import java.net.SocketAddress;
 
 class ClientAgent {
     private Socket socket;
-    private Stream stream;
+    private SocketAddress serverAddress;
     private SmithProtocol protocol;
+    private NetworkStream stream;
+    //Will get from server
     private String UID;
-    private boolean isConnected;
 
-    public ClientAgent() {}
-    public void connect(Socket server) {}
-    public void initSend(Byte[] data) {}
-    public byte[] initRecieve() {return null; }
+    public ClientAgent() {
+        this.socket = new Socket();
+    }
+    public void connect(SocketAddress server) {
+        try {
+            serverAddress = server;
+            socket.connect(server);
+            stream = new NetworkStream();
+            stream.input = socket.getInputStream();
+            stream.output = socket.getOutputStream();
+        } catch (IOException e) {
+            //error when try connect
+            e.printStackTrace();
+        }
+    }
+    public void initSend(Byte[] data) {
+        if (getConnectionStatus()) {
+                //WorkWithData
+                //
+        } else agentDisconnected();
+    }
+    public byte[] initRecieve() {
+        if (getConnectionStatus()) {
+                //WorkWithData
+                //
+        } else agentDisconnected();
+        return null;
+    }
+    public boolean getConnectionStatus() {
+        return socket.isConnected() & !socket.isClosed();
+    }
+    private void agentDisconnected() {
 
-    private void agentDisconnected() {}
+    }
     private void reconnectAttemp() {}
 }
