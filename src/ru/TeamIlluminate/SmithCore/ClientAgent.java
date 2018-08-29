@@ -19,9 +19,7 @@ class ClientAgent {
         try {
             serverAddress = server;
             socket.connect(server);
-            stream = new NetworkStream();
-            stream.input = socket.getInputStream();
-            stream.output = socket.getOutputStream();
+            stream = new NetworkStream(socket.getInputStream(), socket.getOutputStream());
         } catch (IOException e) {
             //error when try connect
             e.printStackTrace();

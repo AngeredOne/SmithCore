@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.List;
+import java.util.ArrayList;
 
  class ServerCore {
     private ServerSocket serverSocket;
-    private List<ServerAgent> agentList;
+    private ArrayList<ServerAgent> agentList = new ArrayList<>();
     private Validator validator;
-    private int timeout;
     private ClientsListener listener;
     private boolean isStarted = false;
 
@@ -25,28 +24,28 @@ import java.util.List;
            e.printStackTrace();
        }
        this.validator = new Validator();
-       this.timeout = timeout;
-       this.validator = new Validator();
-
     }
 
      //needcheckportopening
      //internetconnection
     public codes start() {
         if (!isStarted) {
+            isStarted = true;
             listener = new ClientsListener();
             listener.run();
         }
         return null;
     }
 
-    public void stop() {
+    public codes stop() {
         if (isStarted) {
+            isStarted = false;
             listener.isActive = false;
         }
+        return null;
     }
 
-    public void dropAgent(Socket required) {
+    public codes dropAgent(Socket required) {
        for (ServerAgent concreteAgent : agentList) {
           Socket concreteSocket = concreteAgent.getSocket();
           boolean isSocketEquals =
@@ -59,6 +58,7 @@ import java.util.List;
              agentList.remove(concreteAgent);
           }
        }
+       return null;
     }
 
     public ServerAgent getAgent(Socket required) {
@@ -66,7 +66,7 @@ import java.util.List;
          Socket concreteSocket = concreteAgent.getSocket();
          boolean isSocketEquals =
                  concreteSocket.getPort() ==
-                 required.getPort()
+                         required.getPort()
                  &&
                  concreteSocket.getInetAddress().getCanonicalHostName() ==
                          required.getInetAddress().getCanonicalHostName();
