@@ -1,9 +1,14 @@
 package ru.TeamIlluminate.SmithCore;
 
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
-public class NetworkStream {
+class NetworkStream {
     public InputStream input;
     public OutputStream output;
+
+    public NetworkStream(InputStream iStream, OutputStream oStream)
+    {
+        this.input = iStream;
+        this.output = oStream;
+    }
 }
