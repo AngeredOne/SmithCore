@@ -8,9 +8,15 @@ import java.util.List;
     private List<ServerAgent> agentList;
     private Validator validator;
 
+    enum enumiad {
+       enum1, emum2
+    }
+
     public ServerCore (int port, int timeout) {}
     public void init() {}
-    public void start() {}
+    public void start() {
+
+    }
     public void stop() {}
     public void dropAgent() {}
     public ServerAgent getAgent(Socket client) { return null; }
