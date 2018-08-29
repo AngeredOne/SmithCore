@@ -4,4 +4,8 @@ package ru.TeamIlluminate.SmithCore;
  public boolean[] flags = new boolean[8];
  public byte[] data = new byte[63];
 
+  public SmithPackage()
+  {
+
+  }
 }
