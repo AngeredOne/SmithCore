@@ -4,4 +4,6 @@ import java.net.Socket;
 
  class Validator {
     public String getUID(Socket client) {return "null";}
+
+    private String generateUID() {return "2123123";}
 }
