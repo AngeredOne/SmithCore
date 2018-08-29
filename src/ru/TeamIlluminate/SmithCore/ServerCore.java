@@ -1,9 +1,20 @@
 package ru.TeamIlluminate.SmithCore;
 
-public class ServerCore {
+import java.net.Socket;
+import java.util.List;
 
+ class ServerCore {
+    private Socket socket;
+    private List<ServerAgent> agentList;
+    private Validator validator;
 
-    public void start() {
-    }
+    public ServerCore (int port, int timeout) {}
+    public void init() {}
+    public void start() {}
+    public void stop() {}
+    public void dropAgent() {}
+    public ServerAgent getAgent(Socket client) { return null; }
+
+    private void listen() {}
 
 }

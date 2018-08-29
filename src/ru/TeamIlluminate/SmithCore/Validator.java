@@ -1,4 +1,7 @@
 package ru.TeamIlluminate.SmithCore;
 
-public class Validator {
+import java.net.Socket;
+
+ class Validator {
+    public String getUID(Socket client) {return "null";}
 }
