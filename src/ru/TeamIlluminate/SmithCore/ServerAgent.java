@@ -6,7 +6,7 @@ import java.util.stream.Stream;
  class ServerAgent {
     private Socket socket;
     public Socket getSocket() {return socket;}
-    private Stream stream;
+    private NetworkStream stream;
     private SmithProtocol protocol;
     private String UID;
     public boolean isConnected;
