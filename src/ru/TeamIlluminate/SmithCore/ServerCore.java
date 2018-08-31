@@ -8,7 +8,7 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 
- class ServerCore {
+class ServerCore {
     private ServerSocket serverSocket;
     private ArrayList<ServerAgent> agentList = new ArrayList<>();
     private Validator validator;
@@ -62,18 +62,7 @@ import java.util.ArrayList;
     }
 
     public ServerAgent getAgent(Socket required) {
-      for (ServerAgent concreteAgent : agentList) {
-         Socket concreteSocket = concreteAgent.getSocket();
-         boolean isSocketEquals =
-                 concreteSocket.getPort() ==
-                         required.getPort()
-                 &&
-                 concreteSocket.getInetAddress().getCanonicalHostName() ==
-                         required.getInetAddress().getCanonicalHostName();
-         if (isSocketEquals)
-            return concreteAgent;
-      }
-      return null;
+        return agentList.stream().filter(agent -> agent.getSocket() == required).findFirst().get();
     }
 
     class ClientsListener extends Thread {
