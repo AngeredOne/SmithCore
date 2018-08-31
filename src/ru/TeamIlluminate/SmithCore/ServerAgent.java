@@ -2,7 +2,7 @@ package ru.TeamIlluminate.SmithCore;
 
 import java.io.IOException;
 import java.net.Socket;
-import java.util.stream.Stream;
+import ru.TeamIlluminate.SmithCore.StateManager.codes;
 
  class ServerAgent {
     private Socket socket;
@@ -18,9 +18,28 @@ import java.util.stream.Stream;
         this.protocol = new SmithProtocol(new NetworkStream(socket.getInputStream(), socket.getOutputStream()));
     }
 
-    public void initSend(Byte[] data) {}
+    public void initSend(Byte[] data)
+    {
+         codes code = protocol.send(data);
+         if(code == codes.SendException)
+         {
+             //Call connectHandler
+         }
+    }
 
-    public byte[] initRecieve() {return null;}
+    public void initRecieve()
+    {
+        codes code = protocol.recieve();
+
+        if(code == codes.ReceiveException)
+        {
+            //Call connectHandler
+        }
+        else if(code == codes.DissconectionFlag)
+        {
+            //Call delete agent
+        }
+    }
 
 
     private void agentDisconnected()

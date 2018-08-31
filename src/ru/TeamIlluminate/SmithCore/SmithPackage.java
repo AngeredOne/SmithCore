@@ -24,28 +24,4 @@ class SmithPackage {
         }
         return unionArray;
     }
-
-
-    public SmithPackage getPackage(byte[] bytes) throws IOException
-    {
-        Object obj = null;
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInput in = null;
-        try {
-            in = new ObjectInputStream(bis);
-            obj = in.readObject();
-
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-        }
-        return (SmithPackage)obj;
-    }
 }

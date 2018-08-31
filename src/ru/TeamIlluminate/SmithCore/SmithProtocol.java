@@ -1,12 +1,8 @@
 package ru.TeamIlluminate.SmithCore;
 
-import com.sun.xml.internal.ws.commons.xmlutil.Converter;
-
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import ru.TeamIlluminate.SmithCore.StateManager.codes;
 
@@ -21,7 +17,7 @@ class SmithProtocol {
         this.stream = _stream;
     }
 
-    public void send (Byte[] data)
+    public codes send (Byte[] data)
     {
         packageList = formPackages((data));
         packageList.get(packageList.size() - 1).flag.EndTransmission = true;
@@ -33,11 +29,12 @@ class SmithProtocol {
                 stream.output.write(packageList.get(i).getBytes());
                 stream.output.flush();
             } catch (IOException e) {
-                //Не ну тут короче ивент хуё-моё
                 errorPackage = i;
                 e.printStackTrace();
+                return codes.SendException;
             }
         }
+        return codes.SendOK;
     }
 
     public void resend() {
@@ -50,9 +47,9 @@ class SmithProtocol {
                 stream.output.write(packageList.get(i).getBytes());
                 stream.output.flush();
             } catch (IOException e) {
-                //Не ну тут короче ивент хуё-моё
                 errorPackage = i;
                 e.printStackTrace();
+
             }
         }
 
@@ -71,24 +68,19 @@ class SmithProtocol {
                 stream.input.read(buffer);
             } catch (IOException e) {
                 e.printStackTrace();
-                //Здесь ивент, обрыв связи при чтении пакетов из потока.
-            }
-            byte[] flagsByte = new byte[4];
-
-            for(int i = 0; i < 4; ++i)
-            {
-                flagsByte[i] = buffer[i];
+                return codes.ReceiveException;
             }
 
-            FlagByte flags = new FlagByte().getFlags(flagsByte);
+            FlagByte flags = new FlagByte().getFlags(Arrays.copyOfRange(buffer, 0, 3));
 
             if(flags.Disconnect)
             {
-                //Ивент дисконнекта
-                break;
+                //Call StateManager's event of receiving last package
+                return codes.DissconectionFlag;
             }
             else if(flags.Resended)
             {
+                //Call something 2 provide receiving process
                 //Обработка рисендед, тоже ивент. Формально, на уровне протокола нужно ловить эту шнягу. То есть на уровне протокола сохранять состояние ПОЛУЧЕННЫХ пакеджиков)0)
             }
             else if(flags.EndTransmission)
@@ -113,8 +105,8 @@ class SmithProtocol {
             }
             recivedBytes.addAll(Arrays.asList(dataBytes));
         }
-            //Ивент с передачей массива байтов полученных
-        return null;
+        //Call StateManager's event of receiving data
+        return codes.ReceiveOK;
     }
 
 
