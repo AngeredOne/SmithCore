@@ -5,6 +5,8 @@ import com.sun.xml.internal.ws.commons.xmlutil.Converter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import ru.TeamIlluminate.SmithCore.StateManager.codes;
 
@@ -58,8 +60,7 @@ class SmithProtocol {
 
     public codes recieve () {
 
-        List<SmithPackage> packeges = new ArrayList<SmithPackage>();
-        SmithPackage pack = new SmithPackage();
+        List<Byte> recivedBytes = new ArrayList<>();
 
         boolean isEndedTransmission = false;
 
@@ -92,21 +93,27 @@ class SmithProtocol {
             }
             else if(flags.EndTransmission)
             {
-                //тут ласт пакедж, вызывает досвидули на уровне метода))0))
+                int bytesCount = flags.pSize;
+                Byte[] lastBytes = new Byte[bytesCount];
+
+                for(int i = 0; i < bytesCount; ++i)
+                {
+                    lastBytes[i] = buffer[i];
+                }
+
+                recivedBytes.addAll(Arrays.asList(lastBytes));
                 isEndedTransmission = true;
                 break;
             }
 
-            byte[] dataBytes = new byte[60];
+            Byte[] dataBytes = new Byte[60];
             for(int i = 4; i < buffer.length; ++i)
             {
                 dataBytes[i-4] = buffer[i];
             }
-            pack.flag = flags;
-            pack.data = dataBytes;
-            packeges.add(pack);
+            recivedBytes.addAll(Arrays.asList(dataBytes));
         }
-
+            //Ивент с передачей массива байтов полученных
         return null;
     }
 
