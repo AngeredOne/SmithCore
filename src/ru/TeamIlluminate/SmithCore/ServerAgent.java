@@ -17,10 +17,20 @@ import java.util.stream.Stream;
         this.UID = UID;
         this.protocol = new SmithProtocol(new NetworkStream(socket.getInputStream(), socket.getOutputStream()));
     }
+
     public void initSend(Byte[] data) {}
+
     public byte[] initRecieve() {return null;}
 
-    private void agentDisconnected() {}
-    private void connectHandler() {}
+
+    private void agentDisconnected()
+    {
+
+    }
+
+    private void connectHandler()
+    {
+
+    }
 
 }

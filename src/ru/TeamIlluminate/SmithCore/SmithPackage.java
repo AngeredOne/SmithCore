@@ -3,7 +3,8 @@ package ru.TeamIlluminate.SmithCore;
 import java.io.*;
 
 class SmithPackage {
-    public FlagByte flag;
+
+    public FlagByte flag = new FlagByte();
 
     //Max range - 63 bytes
     public byte[] data = new byte[60];
