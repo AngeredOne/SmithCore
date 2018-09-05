@@ -2,10 +2,36 @@ package ru.TeamIlluminate.SmithCore;
 
 public class StateManager {
     enum codes {
-        SendException, // Exception while sending
-        ReceiveException, //Exception while receiving
-        DissconectionFlag, //Socket sended package with a disconnection flag
-        SendOK, //Protocol send function end sending
-        ReceiveOK //Protocol receive function end receiving
+        // Exception while sending
+        SendException,
+        // Exception while receiving
+        ReceiveException,
+        // Socket sended package with a disconnection flag
+        DissconectionFlag,
+        // Protocol send function end sending
+        SendOK,
+        // Protocol receive function end receiving
+        ReceiveOK
     }
+
+    public void AgentDisconnected(Agent agent, boolean isFullDisconnected)
+    {
+        //call event and delegate agent
+    }
+
+    public void ServerDisconnected()
+    {
+
+    }
+
+    public void AgentReconnected(Agent agent)
+    {
+
+    }
+
+    public void ServerReconnected()
+    {
+
+    }
+
 }

@@ -5,30 +5,23 @@ import java.net.Socket;
 
 import ru.TeamIlluminate.SmithCore.StateManager.codes;
 
-class ServerAgent {
-    private Socket socket;
+class ServerAgent extends Agent {
 
-    public Socket getSocket() {
-        return socket;
-    }
-
-    private NetworkStream stream;
-    private SmithProtocol protocol;
-    private String UID;
     private ReconnectSystem rSys;
 
     public boolean isConnected;
 
     public ServerAgent(Socket socket, String UID) throws IOException {
-        this.socket = socket;
-        this.UID = UID;
-        this.protocol = new SmithProtocol(new NetworkStream(socket.getInputStream(), socket.getOutputStream()));
+        super(socket, UID);
+
+        protocol = new SmithProtocol(new NetworkStream(socket.getInputStream(), socket.getOutputStream()));
         this.rSys = new ReconnectSystem(this);
     }
 
     public void initSend(Byte[] data) {
         codes code = protocol.send(data);
         if (code == codes.SendException) {
+            SM.AgentDisconnected(this, false);
             rSys.start();
         }
     }
@@ -37,14 +30,15 @@ class ServerAgent {
         codes code = protocol.recieve();
 
         if (code == codes.ReceiveException) {
+            SM.AgentDisconnected(this, false);
             rSys.start();
         } else if (code == codes.DissconectionFlag) {
-            //Call delete agent
+            SM.AgentDisconnected(this, true);
         }
     }
 
 
-    private void agentDisconnected() {
+    private void agentReconnected() {
 
     }
 
@@ -54,6 +48,7 @@ class ReconnectSystem extends Thread
 {
 
     private ServerAgent agent = null;
+    private StateManager SM;
     private int timeOut = 0;
 
     public ReconnectSystem(ServerAgent agent)
@@ -84,11 +79,11 @@ class ReconnectSystem extends Thread
             }
             else
             {
-                //Call StateManager, agent full disconnected
+                SM.AgentDisconnected(agent, true);
             }
         }
         //if agent reconnected, code will come here
-        //Call StateManager, agent reconnected
+        SM.AgentReconnected(agent);
     }
 
 }
