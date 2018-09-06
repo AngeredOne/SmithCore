@@ -34,4 +34,13 @@ public class StateManager {
 
     }
 
+    public void BytesRecived(Byte[] bytes)
+    {
+
+    }
+
+    public void ReconnectThreadIsAborted()
+    {
+
+    }
 }
