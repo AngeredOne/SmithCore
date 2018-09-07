@@ -1,7 +1,7 @@
 package ru.TeamIlluminate.SmithCore;
 
 public class StateManager {
-    enum codes {
+    enum RETURN_CODE {
         // Exception while sending
         SendException,
         // Exception while receiving

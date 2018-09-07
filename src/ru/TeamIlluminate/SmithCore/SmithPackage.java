@@ -9,6 +9,16 @@ class SmithPackage {
     //Max range - 63 bytes
     public byte[] data = new byte[60];
 
+    public SmithPackage()
+    {
+        //init package data by zero-bytes
+        for(int i = 0; i < 60; ++i)
+        {
+            data[i] = (byte)0;
+        }
+    }
+
+
     public byte[] getBytes()
     {
         byte[] unionArray = new byte[64];
