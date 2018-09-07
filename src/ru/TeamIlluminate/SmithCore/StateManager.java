@@ -2,12 +2,20 @@ package ru.TeamIlluminate.SmithCore;
 
 class StateManager {
 
-    public static StateManager stateManager;
+    private static StateManager stateManager;
 
-    public StateManager()
-    {
-        stateManager = this;
+    public StateManager instance() {
+        if (stateManager == null)
+            stateManager = new StateManager();
+        return stateManager;
     }
+
+
+    private StateManager()
+    {
+    }
+
+
 
     enum RETURN_CODE {
         // Exception while sending
