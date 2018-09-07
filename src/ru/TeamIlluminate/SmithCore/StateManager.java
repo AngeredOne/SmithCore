@@ -10,13 +10,6 @@ class StateManager {
         return stateManager;
     }
 
-
-    private StateManager()
-    {
-    }
-
-
-
     enum RETURN_CODE {
         // Exception while sending
         SendException,

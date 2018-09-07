@@ -23,7 +23,7 @@ class ServerAgent extends Agent {
     public void initSend(Byte[] data) {
         RETURN_CODE code = protocol.Send(data);
         if (code == RETURN_CODE.SendException) {
-            stateManager.AgentDisconnected(this, false);
+            StateManager.instance().AgentDisconnected(this, false);
             rSys.start();
         }
     }
@@ -32,10 +32,10 @@ class ServerAgent extends Agent {
         RETURN_CODE code = protocol.Receive();
 
         if (code == RETURN_CODE.ReceiveException) {
-            stateManager.AgentDisconnected(this, false);
+            StateManager.instance().AgentDisconnected(this, false);
             rSys.start();
         } else if (code == RETURN_CODE.DissconectionFlag) {
-            stateManager.AgentDisconnected(this, true);
+            StateManager.instance().AgentDisconnected(this, true);
         }
     }
 
@@ -80,11 +80,11 @@ class ReconnectSystem extends Thread
             }
             else
             {
-                stateManager.AgentDisconnected(agent, true);
+                StateManager.instance().AgentDisconnected(agent, true);
             }
         }
         //if agent reconnected, code will come here
-        stateManager.AgentReconnected(agent);
+        StateManager.instance().AgentReconnected(agent);
     }
 
 }
