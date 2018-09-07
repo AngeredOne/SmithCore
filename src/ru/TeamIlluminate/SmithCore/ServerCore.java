@@ -1,7 +1,5 @@
 package ru.TeamIlluminate.SmithCore;
 
-import ru.TeamIlluminate.SmithCore.StateManager.codes;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -28,7 +26,7 @@ class ServerCore {
 
      //needcheckportopening
      //internetconnection
-    public codes start() {
+    public StateManager.RETURN_CODE start() {
         if (!isStarted) {
             isStarted = true;
             listener = new ClientsListener();
@@ -37,7 +35,7 @@ class ServerCore {
         return null;
     }
 
-    public codes stop() {
+    public StateManager.RETURN_CODE stop() {
         if (isStarted) {
             isStarted = false;
             listener.isActive = false;
@@ -45,7 +43,7 @@ class ServerCore {
         return null;
     }
 
-    public codes dropAgent(Socket required) {
+    public StateManager.RETURN_CODE dropAgent(Socket required) {
        for (ServerAgent concreteAgent : agentList) {
           Socket concreteSocket = concreteAgent.getSocket();
           boolean isSocketEquals =
