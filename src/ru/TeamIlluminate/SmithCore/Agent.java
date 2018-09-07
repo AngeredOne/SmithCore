@@ -6,11 +6,10 @@ import java.net.Socket;
 
 public abstract class Agent {
 
-    protected SmithProtocol protocol;
+    protected Protocol protocol;
     protected Socket socket;
-    protected NetworkStream strean;
+    protected NetworkStream stream;
     protected String UID;
-    protected StateManager SM;
 
     public Boolean isConnected;
 

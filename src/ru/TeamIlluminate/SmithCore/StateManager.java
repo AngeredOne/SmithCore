@@ -1,6 +1,14 @@
 package ru.TeamIlluminate.SmithCore;
 
-public class StateManager {
+class StateManager {
+
+    public static StateManager stateManager;
+
+    public StateManager()
+    {
+        stateManager = this;
+    }
+
     enum RETURN_CODE {
         // Exception while sending
         SendException,

@@ -3,7 +3,9 @@ package ru.TeamIlluminate.SmithCore;
 import java.io.IOException;
 import java.net.Socket;
 
-import ru.TeamIlluminate.SmithCore.StateManager.codes;
+import ru.TeamIlluminate.SmithCore.StateManager.RETURN_CODE;
+
+import static ru.TeamIlluminate.SmithCore.StateManager.stateManager;
 
 class ServerAgent extends Agent {
 
@@ -19,21 +21,21 @@ class ServerAgent extends Agent {
     }
 
     public void initSend(Byte[] data) {
-        codes code = protocol.send(data);
-        if (code == codes.SendException) {
-            SM.AgentDisconnected(this, false);
+        RETURN_CODE code = protocol.Send(data);
+        if (code == RETURN_CODE.SendException) {
+            stateManager.AgentDisconnected(this, false);
             rSys.start();
         }
     }
 
     public void initRecieve() {
-        codes code = protocol.recieve();
+        RETURN_CODE code = protocol.Receive();
 
-        if (code == codes.ReceiveException) {
-            SM.AgentDisconnected(this, false);
+        if (code == RETURN_CODE.ReceiveException) {
+            stateManager.AgentDisconnected(this, false);
             rSys.start();
-        } else if (code == codes.DissconectionFlag) {
-            SM.AgentDisconnected(this, true);
+        } else if (code == RETURN_CODE.DissconectionFlag) {
+            stateManager.AgentDisconnected(this, true);
         }
     }
 
@@ -48,7 +50,6 @@ class ReconnectSystem extends Thread
 {
 
     private ServerAgent agent = null;
-    private StateManager SM;
     private int timeOut = 0;
 
     public ReconnectSystem(ServerAgent agent)
@@ -79,11 +80,11 @@ class ReconnectSystem extends Thread
             }
             else
             {
-                SM.AgentDisconnected(agent, true);
+                stateManager.AgentDisconnected(agent, true);
             }
         }
         //if agent reconnected, code will come here
-        SM.AgentReconnected(agent);
+        stateManager.AgentReconnected(agent);
     }
 
 }
