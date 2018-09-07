@@ -4,7 +4,7 @@ class StateManager {
 
     private static StateManager stateManager;
 
-    public StateManager instance() {
+    public static StateManager instance() {
         if (stateManager == null)
             stateManager = new StateManager();
         return stateManager;
