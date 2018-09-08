@@ -30,11 +30,14 @@ public class CoreEventSystem {
         }
     }
 
-    public void agentDisconnected(Agent agent, boolean isFullDisconnected) {
+    public void AgentDisconnected(Agent agent, boolean isFullDisconnected) {
         for (CoreEventHandler handler : subscribers.get(EventCodes.AgentDisconnected))
             ((AgentDisconnectedHandler) handler).AgentDisconnected(agent, isFullDisconnected);
     }
 
+    public void AgentReconnected(Agent agent) {
+
+    }
 }
 interface CoreEventHandler {}
 interface AgentDisconnectedHandler extends CoreEventHandler { void AgentDisconnected(Agent agent, boolean isFullDisconnected); }
