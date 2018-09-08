@@ -5,8 +5,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
+import ru.TeamIlluminate.SmithCore.StateManager.RETURN_CODE;
 
-class ServerCore {
+import javax.swing.plaf.nimbus.State;
+
+class HostAgent {
     private ServerSocket serverSocket;
     private ArrayList<ServerAgent> agentList = new ArrayList<>();
     private Validator validator;
@@ -14,7 +17,7 @@ class ServerCore {
     private boolean isStarted = false;
 
      //error when createSocket
-    public ServerCore (int port, int timeout) {
+    public HostAgent(int port, int timeout) {
        try {
            serverSocket = new ServerSocket(port);
            serverSocket.setSoTimeout(timeout);
@@ -26,42 +29,37 @@ class ServerCore {
 
      //needcheckportopening
      //internetconnection
-    public StateManager.RETURN_CODE start() {
+    public RETURN_CODE start() {
         if (!isStarted) {
             isStarted = true;
             listener = new ClientsListener();
             listener.run();
+            return RETURN_CODE.HostStarted;
         }
-        return null;
+        return RETURN_CODE.HostStartedException;
     }
 
-    public StateManager.RETURN_CODE stop() {
+    public RETURN_CODE stop() {
         if (isStarted) {
+            agentList.clear();
             isStarted = false;
             listener.isActive = false;
+            return RETURN_CODE.HostStopped;
         }
-        return null;
+        return RETURN_CODE.HostStoppedException;
     }
 
-    public StateManager.RETURN_CODE dropAgent(Socket required) {
-       for (ServerAgent concreteAgent : agentList) {
-          Socket concreteSocket = concreteAgent.getSocket();
-          boolean isSocketEquals =
-                  concreteSocket.getPort() ==
-                          required.getPort()
-                          &&
-                          concreteSocket.getInetAddress().getCanonicalHostName() ==
-                                  required.getInetAddress().getCanonicalHostName();
-          if (isSocketEquals) {
-             agentList.remove(concreteAgent);
-          }
-       }
-       return null;
+    public RETURN_CODE dropAgent(Socket required) {
+        boolean result = agentList.removeIf(agent -> agent.getSocket() == required);
+        if (result)
+            return RETURN_CODE.HostDroppedAgent;
+        else return RETURN_CODE.HostDroppedAgentException_NoAgentInList;
     }
 
     public ServerAgent getAgent(Socket required) {
         return agentList.stream().filter(agent -> agent.getSocket() == required).findFirst().get();
     }
+
 
     class ClientsListener extends Thread {
         public boolean isActive = true;
@@ -75,12 +73,14 @@ class ServerCore {
                     agentList.add(newAgent);
                     //newagentevent
                 } catch (SocketTimeoutException e) {
-                    //Someone try connect but timeout;
+                    StateManager.instance().eventSystem.HostConnectionTimeout();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    StateManager.instance().eventSystem.HostAcceptingConnectionError();
                 }
             }
         }
+
+
     }
 
 }
