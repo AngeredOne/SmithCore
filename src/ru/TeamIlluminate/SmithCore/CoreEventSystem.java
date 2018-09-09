@@ -1,10 +1,8 @@
 package ru.TeamIlluminate.SmithCore;
 
-import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
-import java.net.Socket;
 import java.util.*;
 
 public class CoreEventSystem {
@@ -48,6 +46,10 @@ public class CoreEventSystem {
     }
 
     public void HostAcceptingConnectionError() {
+
+    }
+
+    public void HostAcceptedNewAgent(ServerAgent agent) {
 
     }
 

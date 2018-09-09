@@ -7,8 +7,6 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import ru.TeamIlluminate.SmithCore.StateManager.RETURN_CODE;
 
-import javax.swing.plaf.nimbus.State;
-
 class HostAgent {
     private ServerSocket serverSocket;
     private ArrayList<ServerAgent> agentList = new ArrayList<>();
@@ -16,7 +14,6 @@ class HostAgent {
     private ClientsListener listener;
     private boolean isStarted = false;
 
-     //error when createSocket
     public HostAgent(int port, int timeout) {
        try {
            serverSocket = new ServerSocket(port);
@@ -27,8 +24,6 @@ class HostAgent {
        this.validator = new Validator();
     }
 
-     //needcheckportopening
-     //internetconnection
     public RETURN_CODE start() {
         if (!isStarted) {
             isStarted = true;
@@ -71,7 +66,7 @@ class HostAgent {
                     String UID = validator.getUID(inSocket);
                     ServerAgent newAgent = new ServerAgent(inSocket, UID);
                     agentList.add(newAgent);
-                    //newagentevent
+                    StateManager.instance().eventSystem.HostAcceptedNewAgent(newAgent);
                 } catch (SocketTimeoutException e) {
                     StateManager.instance().eventSystem.HostConnectionTimeout();
                 } catch (IOException e) {
