@@ -1,5 +1,7 @@
 package ru.TeamIlluminate.SmithCore;
 
+import com.sun.security.ntlm.Server;
+
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
@@ -53,6 +55,9 @@ public class CoreEventSystem {
 
     }
 
+    public void HostAcceptedReconnect(ServerAgent agent) {
+
+    }
 }
 @Target(ElementType.METHOD)
 @interface EventMethod{

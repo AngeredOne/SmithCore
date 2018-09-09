@@ -18,43 +18,42 @@ class HostAgent {
        try {
            serverSocket = new ServerSocket(port);
            serverSocket.setSoTimeout(timeout);
+           validator = new Validator();
        } catch (IOException e) {
            e.printStackTrace();
        }
-       this.validator = new Validator();
     }
 
-    public RETURN_CODE start() {
+    public boolean start() {
         if (!isStarted) {
             isStarted = true;
             listener = new ClientsListener();
             listener.run();
-            return RETURN_CODE.HostStarted;
+            return true;
         }
-        return RETURN_CODE.HostStartedException;
+        return false;
     }
 
-    public RETURN_CODE stop() {
+    public boolean stop() {
         if (isStarted) {
             agentList.clear();
             isStarted = false;
             listener.isActive = false;
-            return RETURN_CODE.HostStopped;
+            return true;
         }
-        return RETURN_CODE.HostStoppedException;
+        return false;
     }
 
-    public RETURN_CODE dropAgent(Socket required) {
+    public boolean dropAgent(Socket required) {
         boolean result = agentList.removeIf(agent -> agent.getAgentSocket() == required);
         if (result)
-            return RETURN_CODE.HostDroppedAgent;
-        else return RETURN_CODE.HostDroppedAgentException_NoAgentInList;
+            return true;
+        else return false;
     }
 
     public ServerAgent getAgent(Socket required) {
         return agentList.stream().filter(agent -> agent.getAgentSocket() == required).findFirst().get();
     }
-
 
     class ClientsListener extends Thread {
         public boolean isActive = true;
@@ -63,10 +62,15 @@ class HostAgent {
             while (isActive) {
                 try {
                     Socket inSocket = serverSocket.accept();
-                    String UID = validator.getUID(inSocket);
-                    ServerAgent newAgent = new ServerAgent(UID, inSocket);
-                    agentList.add(newAgent);
-                    StateManager.instance().eventSystem.HostAcceptedNewAgent(newAgent);
+                    ServerAgent agent = getAgent(inSocket);
+                    if (getAgent(inSocket) instanceof ServerAgent) {
+                        agent.isConnected = true;
+                        StateManager.instance().eventSystem.HostAcceptedReconnect(agent);
+                    } else {
+                        agent = new ServerAgent(validator.getUID(inSocket), inSocket);
+                        agentList.add(agent);
+                        StateManager.instance().eventSystem.HostAcceptedNewAgent(agent);
+                    }
                 } catch (SocketTimeoutException e) {
                     StateManager.instance().eventSystem.HostConnectionTimeout();
                 } catch (IOException e) {
@@ -74,8 +78,5 @@ class HostAgent {
                 }
             }
         }
-
-
     }
-
 }
