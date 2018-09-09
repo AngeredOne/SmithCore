@@ -64,7 +64,7 @@ class HostAgent {
                 try {
                     Socket inSocket = serverSocket.accept();
                     String UID = validator.getUID(inSocket);
-                    ServerAgent newAgent = new ServerAgent(inSocket, UID);
+                    ServerAgent newAgent = new ServerAgent(UID, inSocket);
                     agentList.add(newAgent);
                     StateManager.instance().eventSystem.HostAcceptedNewAgent(newAgent);
                 } catch (SocketTimeoutException e) {
