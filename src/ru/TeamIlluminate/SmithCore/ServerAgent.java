@@ -25,6 +25,12 @@ class ServerAgent extends Agent {
 
         this.rSys = new ReconnectSystem(this);
     }
+
+    public Socket getAgentSocket()
+    {
+        return this.socket;
+    }
+
 }
 
 class ReconnectSystem extends Thread
