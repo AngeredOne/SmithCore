@@ -45,14 +45,14 @@ class HostAgent {
     }
 
     public RETURN_CODE dropAgent(Socket required) {
-        boolean result = agentList.removeIf(agent -> agent.getSocket() == required);
+        boolean result = agentList.removeIf(agent -> agent.getAgentSocket() == required);
         if (result)
             return RETURN_CODE.HostDroppedAgent;
         else return RETURN_CODE.HostDroppedAgentException_NoAgentInList;
     }
 
     public ServerAgent getAgent(Socket required) {
-        return agentList.stream().filter(agent -> agent.getSocket() == required).findFirst().get();
+        return agentList.stream().filter(agent -> agent.getAgentSocket() == required).findFirst().get();
     }
 
 
