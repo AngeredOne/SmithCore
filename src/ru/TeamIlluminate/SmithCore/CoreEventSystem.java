@@ -1,52 +1,48 @@
 package ru.TeamIlluminate.SmithCore;
 
+import java.lang.annotation.Annotation;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.net.Socket;
 import java.util.*;
 
 public class CoreEventSystem {
-    private HashMap<EventCodes, List<CoreEventHandler>> subscribers = new HashMap<>();
-    public enum EventCodes {
-
-        AgentDisconnected {
-            public Class<AgentDisconnectedHandler> getEnumClass() { return ru.TeamIlluminate.SmithCore.AgentDisconnectedHandler.class; }
-        },
-        ServerDisconnected {
-            public Class<ServerDisconnectedHandler> getEnumClass() { return ru.TeamIlluminate.SmithCore.ServerDisconnectedHandler.class; }
-        },
-        AgentReconnected {
-            public Class<AgentReconnectHandler> getEnumClass() { return ru.TeamIlluminate.SmithCore.AgentReconnectHandler.class; }
-        },
-        HostConnectionTimeout {
-          public Class<HostConnectioTimeoutHandler> getEnumClass () { return ru.TeamIlluminate.SmithCore.HostConnectioTimeoutHandler.class; }
-        };
-
-        public abstract <T extends CoreEventHandler> Class<T> getEnumClass();
-    }
-
+    private HashMap<Class<? extends CoreEventHandler>, List<CoreEventHandler>> subscribers = new HashMap<>();
+    //Надо затестить
     CoreEventSystem() {
-        for (EventCodes code : EventCodes.values()) {
-            subscribers.put(code, new ArrayList<>());
+        ArrayList<EventMethod> eventMethods = new ArrayList<>();
+        for (Method method : getClass().getMethods()) {
+            EventMethod concreteMethod = method.getAnnotation(EventMethod.class);
+            if (concreteMethod instanceof EventMethod)
+                eventMethods.add(concreteMethod);
+        }
+        for (EventMethod method : eventMethods) {
+            subscribers.put(method.typeEvent(), new ArrayList<>());
         }
     }
 
-     public void subscribe(CoreEventHandler subs) {
-        for (EventCodes code : EventCodes.values()) {
-            if (subs.getClass().equals(code.getEnumClass())) {
-                subscribers.get(code).add(subs);
+    public void subscribe(CoreEventHandler sub) {
+        for (Class<? extends CoreEventHandler> classType : subscribers.keySet()) {
+            if (sub.getClass().equals(classType)) {
+                subscribers.get(classType).add(sub);
             }
         }
     }
 
+    @EventMethod(typeEvent = AgentDisconnectedHandler.class)
     public void AgentDisconnected(Agent agent, boolean isFullDisconnected) {
-        for (CoreEventHandler handler : subscribers.get(EventCodes.AgentDisconnected))
+        for (CoreEventHandler handler : subscribers.get(AgentDisconnectedHandler.class))
             ((AgentDisconnectedHandler) handler).AgentDisconnected(agent, isFullDisconnected);
     }
 
+    @EventMethod(typeEvent = AgentReconnectHandler.class)
     public void AgentReconnected(Agent agent) {
-        for (CoreEventHandler handler : subscribers.get(EventCodes.AgentDisconnected))
+        for (CoreEventHandler handler : subscribers.get(AgentReconnectHandler.class))
             ((AgentReconnectHandler) handler).AgentReconnected(agent);
     }
 
+    @EventMethod(typeEvent = HostConnectioTimeoutHandler.class)
     public void HostConnectionTimeout() {
 
     }
@@ -56,6 +52,11 @@ public class CoreEventSystem {
     }
 
 }
+@Target(ElementType.METHOD)
+@interface EventMethod{
+    Class<? extends CoreEventHandler> typeEvent() default CoreEventHandler.class;
+}
+
 interface CoreEventHandler {}
 interface AgentDisconnectedHandler extends CoreEventHandler { void AgentDisconnected(Agent agent, boolean isFullDisconnected); }
 interface ServerDisconnectedHandler extends CoreEventHandler {void ServerDisconnected(); }
