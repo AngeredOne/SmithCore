@@ -78,7 +78,7 @@ class SmithProtocol implements Protocol {
 
     @Override
     public StateManager.RETURN_CODE Receive() {
-        List<Byte> recivedBytes = new ArrayList<>();
+        ArrayList<Byte> recivedBytes = new ArrayList<>();
 
         boolean isEndedTransmission = false;
 
@@ -126,7 +126,7 @@ class SmithProtocol implements Protocol {
             }
             recivedBytes.addAll(Arrays.asList(dataBytes));
         }
-        //Call StateManager's event of receiving data
+        StateManager.instance().eventSystem.BytesRecieved(recivedBytes);
         return StateManager.RETURN_CODE.ReceiveOK;
     }
 

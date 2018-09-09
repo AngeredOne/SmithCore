@@ -4,12 +4,13 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-class ClientAgent extends Agent {
+class ClientAgent extends Agent implements AgentDisconnectedHandler, AgentReconnectHandler {
 
     private Socket socket;
     private SocketAddress serverAddress;
     public ClientAgent() {
         super("");
+        StateManager.instance().eventSystem.subscribe(this);
         socket = new Socket();
     }
 
@@ -24,13 +25,13 @@ class ClientAgent extends Agent {
         }
     }
 
-    private void HostDisconnected()
-    {
+    @Override
+    public void AgentDisconnected(Agent agent, boolean isFullDisconnected) {
         new ReconnectSystem(this).start();
     }
 
-    private void HostReconnected()
-    {
+    @Override
+    public void AgentReconnected(Agent agent) {
         isConnected = true;
     }
 
