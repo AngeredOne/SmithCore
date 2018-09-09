@@ -10,40 +10,21 @@ import static ru.TeamIlluminate.SmithCore.StateManager.stateManager;
 class ServerAgent extends Agent {
 
     private ReconnectSystem rSys;
+    private Socket socket;
 
     public boolean isConnected;
 
-    public ServerAgent(Socket socket, String UID) throws IOException {
-        super(socket, UID);
+    public ServerAgent(String UID, Socket socket){
+        super(UID);
 
-        protocol = new SmithProtocol(new NetworkStream(socket.getInputStream(), socket.getOutputStream()));
+        this.socket = socket;
+
+        try {
+            protocol = new SmithProtocol(new NetworkStream(socket.getInputStream(), socket.getOutputStream()));
+        } catch (IOException ex) {}
+
         this.rSys = new ReconnectSystem(this);
     }
-
-    public void initSend(Byte[] data) {
-        RETURN_CODE code = protocol.Send(data);
-        if (code == RETURN_CODE.SendException) {
-            StateManager.instance().eventSystem.AgentDisconnected(this, false);
-            rSys.start();
-        }
-    }
-
-    public void initRecieve() {
-        RETURN_CODE code = protocol.Receive();
-
-        if (code == RETURN_CODE.ReceiveException) {
-            StateManager.instance().eventSystem.AgentDisconnected(this, false);
-            rSys.start();
-        } else if (code == RETURN_CODE.DissconectionFlag) {
-            StateManager.instance().eventSystem.AgentDisconnected(this, true);
-        }
-    }
-
-
-    private void agentReconnected() {
-
-    }
-
 }
 
 class ReconnectSystem extends Thread
