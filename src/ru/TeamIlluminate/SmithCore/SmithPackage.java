@@ -18,6 +18,12 @@ class SmithPackage {
         }
     }
 
+    public SmithPackage(FlagByte flag, byte[] data)
+    {
+        this.flag = flag;
+        this.data = data;
+    }
+
 
     public byte[] getBytes()
     {

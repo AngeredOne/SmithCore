@@ -1,5 +1,8 @@
 package ru.TeamIlluminate.SmithCore;
 
+import com.sun.javafx.scene.layout.region.Margins;
+import com.sun.xml.internal.ws.commons.xmlutil.Converter;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -8,7 +11,7 @@ import java.util.List;
 class SmithProtocol implements Protocol {
     private NetworkStream stream;
     private List<SmithPackage> packageList;
-    private List<SmithPackage> recivedPackages;
+    private ArrayList<SmithPackage> recivedPackages;
     private int errorPackage = -1;
 
     public SmithProtocol(NetworkStream _stream)
@@ -56,31 +59,43 @@ class SmithProtocol implements Protocol {
         return formedPackages;
     }
 
-    @Override
-    public StateManager.RETURN_CODE Send(Byte[] bytes) {
-        packageList = formPackages((bytes));
-        packageList.get(packageList.size() - 1).flag.EndTransmission = true;
+    //Подписать на событие реконнекта, гы
+    private void Send()
+    {
+        if(packageList.size() > 0) {
+            int sendBegin = 0;
+            if (errorPackage > -1) sendBegin = errorPackage;
 
-        for(int i = 0; i < packageList.size(); ++i)
-        {
-            try {
-
-                stream.output.write(packageList.get(i).getBytes());
-                stream.output.flush();
-            } catch (IOException e) {
-                errorPackage = i;
-                e.printStackTrace();
-                return StateManager.RETURN_CODE.SendException;
+            for (int i = sendBegin; i < packageList.size(); ++i) {
+                try {
+                    stream.output.write(packageList.get(i).getBytes());
+                    stream.output.flush();
+                } catch (IOException e) {
+                    errorPackage = i;
+                    StateManager.instance().CommunicationException(e.getMessage(), this, i);
+                }
             }
         }
-        return StateManager.RETURN_CODE.SendOK;
     }
 
     @Override
-    public StateManager.RETURN_CODE Receive() {
+    public void SendInit(Byte[] bytes) {
+
+        packageList = formPackages((bytes));
+        packageList.get(packageList.size() - 1).flag.EndTransmission = true;
+
+        Send();
+    }
+
+    @Override
+    public void Receive() {
+
+        ArrayList<SmithPackage> recPackages = new ArrayList<>();
+
         ArrayList<Byte> recivedBytes = new ArrayList<>();
 
         boolean isEndedTransmission = false;
+        boolean isClientDisconneted = false;
 
         while (!isEndedTransmission)
         {
@@ -88,21 +103,23 @@ class SmithProtocol implements Protocol {
             try {
                 stream.input.read(buffer);
             } catch (IOException e) {
-                e.printStackTrace();
-                return StateManager.RETURN_CODE.ReceiveException;
+                StateManager.instance().CommunicationException(e.getMessage(), this, recPackages.size());
+                return;
             }
 
             FlagByte flags = new FlagByte().getFlags(Arrays.copyOfRange(buffer, 0, 3));
+            byte[] data = Arrays.copyOfRange(buffer, 4, 63);
+
 
             if(flags.Disconnect)
             {
-                //Call StateManager's event of receiving last package
-                return StateManager.RETURN_CODE.DissconectionFlag;
+                isClientDisconneted = true;
+                isEndedTransmission = true;
             }
             else if(flags.Resended)
             {
-                //Call something 2 provide receiving process
-                //Обработка рисендед, тоже ивент. Формально, на уровне протокола нужно ловить эту шнягу. То есть на уровне протокола сохранять состояние ПОЛУЧЕННЫХ пакеджиков)0)
+                recPackages = recivedPackages;
+                //Это всё, потому что вставляем коллекцию наших уже полученных пакетов и, начиная с этого пакета продолжаем собирать эту коллекцию.
             }
             else if(flags.EndTransmission)
             {
@@ -119,15 +136,26 @@ class SmithProtocol implements Protocol {
                 break;
             }
 
+            recPackages.add(new SmithPackage(flags, data));
+
             Byte[] dataBytes = new Byte[60];
-            for(int i = 4; i < buffer.length; ++i)
+
+            //Say HELLO JAVA here, `cuz we need place some idiot code here 4r provide byte => Byte convertation (|-_-|)
+            for(int i = 0; i < data.length; ++i)
             {
-                dataBytes[i-4] = buffer[i];
+                dataBytes[i] = data[i];
             }
+
             recivedBytes.addAll(Arrays.asList(dataBytes));
         }
-        StateManager.instance().eventSystem.BytesRecieved(recivedBytes);
-        return StateManager.RETURN_CODE.ReceiveOK;
+
+        if(recivedBytes.size() > 0)
+        StateManager.instance().ReceiverProvideBytes(recivedBytes);
+
+        if(isClientDisconneted)
+            return;
+        else
+            return;
     }
 
     public StateManager.RETURN_CODE Resend() {

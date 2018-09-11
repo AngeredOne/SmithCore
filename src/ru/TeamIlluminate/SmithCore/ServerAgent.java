@@ -71,11 +71,11 @@ class ServerAgent extends Agent {
                 }
                 else
                 {
-                    StateManager.instance().eventSystem.AgentDisconnected(agent, true);
+                    StateManager.instance().AgentDisconnected(agent);
                 }
             }
             //if agent reconnected, code will come here
-            StateManager.instance().eventSystem.AgentReconnected(agent);
+            StateManager.instance().AgentReconnected(agent);
         }
     }
 
