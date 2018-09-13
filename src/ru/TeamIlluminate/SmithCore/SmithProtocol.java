@@ -9,14 +9,17 @@ import java.util.Arrays;
 import java.util.List;
 
 class SmithProtocol implements Protocol {
+
+    private Agent agent;
     private NetworkStream stream;
     private List<SmithPackage> packageList;
     private ArrayList<SmithPackage> recivedPackages;
     private int errorPackage = -1;
 
-    public SmithProtocol(NetworkStream _stream)
+    public SmithProtocol(NetworkStream _stream, Agent agent)
     {
         this.stream = _stream;
+        this.agent = agent;
     }
 
     private List<SmithPackage> formPackages(Byte[] data)
