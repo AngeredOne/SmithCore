@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-class ClientAgent extends Agent implements AgentDisconnectedHandler, AgentReconnectHandler {
+class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHandler {
 
     private Socket socket;
     private SocketAddress serverAddress;
     public ClientAgent() {
         super("");
-        StateManager.instance().eventSystem.subscribe(this);
+        StateManager.instance().subcribeHandler(this);
         socket = new Socket();
     }
 
@@ -26,7 +26,7 @@ class ClientAgent extends Agent implements AgentDisconnectedHandler, AgentReconn
     }
 
     @Override
-    public void AgentDisconnected(Agent agent, boolean isFullDisconnected) {
+    public void AgentLeaved(Agent agent) {
         new ReconnectSystem(this).start();
     }
 
@@ -70,11 +70,11 @@ class ClientAgent extends Agent implements AgentDisconnectedHandler, AgentReconn
                 }
                 else
                 {
-                    StateManager.instance().eventSystem.AgentDisconnected(agent, true);
+                    StateManager.instance().AgentDisconnected(agent, true);
                 }
             }
             //if agent reconnected, code will come here
-            StateManager.instance().eventSystem.AgentReconnected(agent);
+            StateManager.instance().AgentReconnected(agent);
         }
     }
 

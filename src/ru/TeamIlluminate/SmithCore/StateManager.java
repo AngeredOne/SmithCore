@@ -31,6 +31,14 @@ class StateManager {
         ReceiveOK
     }
 
+    public void subcribeHandler(CoreEventHandler handler) {
+        eventSystem.subscribe(handler);
+    }
+
+    public void AgentConnected(Agent agent) {
+        eventSystem.AgentConnected(agent);
+    }
+
     public void AgentDisconnected(Agent agent, boolean isFullDisconnected)
     {
         eventSystem.AgentLeave(agent);

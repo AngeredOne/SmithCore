@@ -7,7 +7,7 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import ru.TeamIlluminate.SmithCore.StateManager.RETURN_CODE;
 
-class Host implements AgentDisconnectedHandler {
+class Host implements AgentLeavedHandler {
     private ServerSocket serverSocket;
     private ArrayList<ServerAgent> agentList = new ArrayList<>();
     private Validator validator;
@@ -19,7 +19,7 @@ class Host implements AgentDisconnectedHandler {
            serverSocket = new ServerSocket(port);
            serverSocket.setSoTimeout(timeout);
            validator = new Validator();
-           StateManager.instance().eventSystem.subscribe(this);
+           StateManager.instance().subcribeHandler(this);
        } catch (IOException e) {
            e.printStackTrace();
        }
@@ -30,7 +30,6 @@ class Host implements AgentDisconnectedHandler {
             isStarted = true;
             listener = new ClientsListener();
             listener.run();
-            StateManager.instance().eventSystem.HostStarted();
             return true;
         }
         return false;
@@ -41,7 +40,6 @@ class Host implements AgentDisconnectedHandler {
             agentList.clear();
             isStarted = false;
             listener.isActive = false;
-            StateManager.instance().eventSystem.HostStopped();
             return true;
         }
         return false;
@@ -50,7 +48,7 @@ class Host implements AgentDisconnectedHandler {
     public boolean dropAgent(Socket required) {
         ServerAgent agentToRemove = agentList.stream().filter(agent -> agent.getAgentSocket() == required).findFirst().get();
         if (agentToRemove instanceof ServerAgent) {
-            StateManager.instance().eventSystem.AgentDisconnected(agentToRemove, true);
+            StateManager.instance().AgentDisconnected(agentToRemove, true);
             return true;
         } else return false;
     }
@@ -60,13 +58,8 @@ class Host implements AgentDisconnectedHandler {
     }
 
     @Override
-    public void AgentDisconnected(Agent agent, boolean isFullDisconnected) {
-        ServerAgent serverAgent = (ServerAgent) agent;
-        if (agentList.contains(serverAgent)) {
-            if (isFullDisconnected)
-                agentList.remove(serverAgent);
-            else serverAgent.AgentDisconnected();
-        }
+    public void AgentLeaved(Agent agent) {
+        agentList.stream().filter(agentFromList -> agentFromList == agent).findFirst().get();
     }
 
     class ClientsListener extends Thread {
@@ -79,14 +72,14 @@ class Host implements AgentDisconnectedHandler {
                     ServerAgent agent = getAgent(inSocket);
                     if (getAgent(inSocket) instanceof ServerAgent) {
                         agent.isConnected = true;
-                        StateManager.instance().eventSystem.HostAcceptedReconnect(agent);
+                        StateManager.instance().AgentReconnected(agent);
                     } else {
                         agent = new ServerAgent(validator.getUID(inSocket), inSocket);
                         agentList.add(agent);
-                        StateManager.instance().eventSystem.HostAcceptedNewAgent(agent);
+                        StateManager.instance().AgentConnected(agent);
                     }
                 } catch (SocketTimeoutException e) {
-                    StateManager.instance().eventSystem.HostConnectionTimeout();
+                    //??
                 } catch (IOException e) {
                     //?
                     e.printStackTrace();

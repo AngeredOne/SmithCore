@@ -30,6 +30,9 @@ public class CoreEventSystem {
         }
     }
 
+    void AgentConnected(Agent agent) {
+    }
+
     @EventMethod(typeEvent = AgentDisconnectedHandler.class)
     void AgentDisconnected(Agent agent) {
         for (CoreEventHandler handler : subscribers.get(AgentDisconnectedHandler.class))
@@ -60,18 +63,6 @@ public class CoreEventSystem {
             ((HostAcceptedReconnect) handler).HostAcceptedReconnect(agent);
     }
 
-    @EventMethod(typeEvent = HostStartedHandler.class)
-    void HostStarted() {
-        for (CoreEventHandler handler : subscribers.get(HostStartedHandler.class))
-            ((HostStartedHandler) handler).HostStarted();
-    }
-
-    @EventMethod(typeEvent = HostStoppedHandler.class)
-    void HostStopped() {
-        for (CoreEventHandler handler : subscribers.get(HostStoppedHandler.class))
-            ((HostStoppedHandler) handler).HostStopped();
-    }
-
     @EventMethod(typeEvent = BytesRecievedHandler.class)
     void BytesRecieved(ArrayList<Byte> bytes) {
         for (CoreEventHandler handler : subscribers.get(BytesRecievedHandler.class))
@@ -93,11 +84,6 @@ public class CoreEventSystem {
 
     }
 
-
-
-
-
-
 }
 @Target(ElementType.METHOD)
 @interface EventMethod{
@@ -113,6 +99,4 @@ interface CommunicationExceptionHandler extends CoreEventHandler { void Communic
 interface ReconnectThreadExceptionHandler extends CoreEventHandler  { void ReconnectThreadException(); }
 interface HostConnectioTimeoutHandler extends CoreEventHandler { void HostConnectionTimeout(); }
 interface HostAcceptedNewAgent extends CoreEventHandler { void HostAcceptedNewAgent(ServerAgent agent); }
-interface HostStartedHandler extends CoreEventHandler { void HostStarted(); }
-interface HostStoppedHandler extends CoreEventHandler { void HostStopped(); }
 interface HostAcceptedReconnect extends CoreEventHandler { void HostAcceptedReconnect(ServerAgent agent); }
