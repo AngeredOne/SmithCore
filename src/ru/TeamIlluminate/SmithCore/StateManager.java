@@ -33,12 +33,13 @@ class StateManager {
 
     public void AgentDisconnected(Agent agent, boolean isFullDisconnected)
     {
-        //Создать ивент AgentLeave(Agent agent) и AgentDisconnected(Agent agent);
+        eventSystem.AgentLeave(agent);
+        eventSystem.AgentDisconnected(agent);
     }
 
     public void AgentReconnected(Agent agent)
     {
-        //Создать ивент AgentReconnected(Agent agent)
+        eventSystem.AgentReconnected(agent);
     }
 
     public void CommunicationException(String message, Protocol protocol, Integer packNumber, Agent agent)
@@ -53,7 +54,7 @@ class StateManager {
                         "Package number: {2}",
                 message, protocol.getClass().getName(), packNumber
         );
-        //Создать ивент ComminicationException(String info);
+        eventSystem.CommunicationException(info);
         AgentDisconnected(agent, false);
     }
 
@@ -67,7 +68,7 @@ class StateManager {
                         "Agent status: {1}",
                 agent.UID, agent.isConnected
         );
-        //Создать ивент ReconnectionThreadException(String info);
+        eventSystem.ReconnectThreadException(info);
         if(!agent.isConnected) AgentDisconnected(agent, true);
     }
 

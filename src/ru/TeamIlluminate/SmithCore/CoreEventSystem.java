@@ -31,9 +31,9 @@ public class CoreEventSystem {
     }
 
     @EventMethod(typeEvent = AgentDisconnectedHandler.class)
-    void AgentDisconnected(Agent agent, boolean isFullDisconnected) {
+    void AgentDisconnected(Agent agent) {
         for (CoreEventHandler handler : subscribers.get(AgentDisconnectedHandler.class))
-            ((AgentDisconnectedHandler) handler).AgentDisconnected(agent, isFullDisconnected);
+            ((AgentDisconnectedHandler) handler).AgentDisconnected(agent);
     }
 
     @EventMethod(typeEvent = AgentReconnectHandler.class)
@@ -78,6 +78,25 @@ public class CoreEventSystem {
             ((BytesRecievedHandler) handler).BytesRecived(bytes);
     }
 
+    @EventMethod(typeEvent = AgentLeavedHandler.class)
+    void AgentLeave(Agent agent) {
+
+    }
+
+    @EventMethod(typeEvent = CommunicationExceptionHandler.class)
+    void CommunicationException(String message) {
+
+    }
+
+    @EventMethod(typeEvent = ReconnectThreadExceptionHandler.class)
+    void ReconnectThreadException(String message) {
+
+    }
+
+
+
+
+
 
 }
 @Target(ElementType.METHOD)
@@ -86,10 +105,12 @@ public class CoreEventSystem {
 }
 
 interface CoreEventHandler {}
-interface AgentDisconnectedHandler extends CoreEventHandler { void AgentDisconnected(Agent agent, boolean isFullDisconnected); }
+interface AgentDisconnectedHandler extends CoreEventHandler { void AgentDisconnected(Agent agent); }
+interface AgentLeavedHandler extends CoreEventHandler { void AgentLeaved(Agent agent); }
 interface AgentReconnectHandler extends CoreEventHandler { void AgentReconnected(Agent agent); }
 interface BytesRecievedHandler extends CoreEventHandler { void BytesRecived(ArrayList<Byte> bytes); }
-interface ReconnectThreadIsAbortedHandler extends CoreEventHandler  { void ReconnectThreadIsAborted(); }
+interface CommunicationExceptionHandler extends CoreEventHandler { void CommunicationException(String message); }
+interface ReconnectThreadExceptionHandler extends CoreEventHandler  { void ReconnectThreadException(); }
 interface HostConnectioTimeoutHandler extends CoreEventHandler { void HostConnectionTimeout(); }
 interface HostAcceptedNewAgent extends CoreEventHandler { void HostAcceptedNewAgent(ServerAgent agent); }
 interface HostStartedHandler extends CoreEventHandler { void HostStarted(); }
