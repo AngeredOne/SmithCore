@@ -64,17 +64,18 @@ class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHan
                         agent.socket.connect(agent.serverAddress);
                         Thread.currentThread().sleep(200);
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        //Call SM thread error(thread is aborted but code is run)
+                        StateManager.instance().ReconnectionThreadException(e.getMessage(), agent);
+                        break;
                     }
                 }
                 else
                 {
                     StateManager.instance().AgentDisconnected(agent, true);
+                    break;
                 }
             }
-            //if agent reconnected, code will come here
-            StateManager.instance().AgentReconnected(agent);
+            if(agent.isConnected) StateManager.instance().AgentReconnected(agent);
+            currentThread().interrupt();
         }
     }
 

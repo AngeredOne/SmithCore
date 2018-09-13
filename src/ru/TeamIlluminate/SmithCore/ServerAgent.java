@@ -20,13 +20,11 @@ class ServerAgent extends Agent {
         try {
             protocol = new SmithProtocol(new NetworkStream(socket.getInputStream(), socket.getOutputStream()), this);
         } catch (IOException ex) {}
-
-        this.rSys = new ReconnectSystem(this);
     }
 
      public void AgentDisconnected()
      {
-         rSys.start();
+         new ReconnectSystem(this).start();
      }
 
 
@@ -64,16 +62,18 @@ class ServerAgent extends Agent {
                         Thread.currentThread().sleep(200);
                     } catch (InterruptedException e) {
                         StateManager.instance().ReconnectionThreadException(e.getMessage(), agent);
-                        currentThread().interrupt();
+                        break;
                     }
                 }
                 else
                 {
                     StateManager.instance().AgentDisconnected(agent, true);
+                    break;
                 }
             }
-            //if agent reconnected, code will come here
+            if(agent.isConnected)
             StateManager.instance().AgentReconnected(agent);
+            currentThread().interrupt();
         }
     }
 
