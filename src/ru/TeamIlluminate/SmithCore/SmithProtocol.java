@@ -62,8 +62,8 @@ class SmithProtocol implements Protocol {
         return formedPackages;
     }
 
-    //Подписать на событие реконнекта, гы
-    private void Send()
+    @EventMethod(typeEvent = AgentReconnectHandler.class)
+    public void Send()
     {
         if(packageList.size() > 0) {
             int sendBegin = 0;
@@ -75,10 +75,16 @@ class SmithProtocol implements Protocol {
                     stream.output.flush();
                 } catch (IOException e) {
                     errorPackage = i;
-                    StateManager.instance().CommunicationException(e.getMessage(), this, i);
+                    StateManager.instance().CommunicationException(e.getMessage(), this, i, agent);
                 }
             }
+            packageList.clear();
         }
+    }
+
+    public void Disconnect()
+    {
+
     }
 
     @Override
@@ -100,13 +106,13 @@ class SmithProtocol implements Protocol {
         boolean isEndedTransmission = false;
         boolean isClientDisconneted = false;
 
-        while (!isEndedTransmission)
+        while (!isEndedTransmission & isClientDisconneted)
         {
             byte[] buffer = new byte[64];
             try {
                 stream.input.read(buffer);
             } catch (IOException e) {
-                StateManager.instance().CommunicationException(e.getMessage(), this, recPackages.size());
+                StateManager.instance().CommunicationException(e.getMessage(), this, recPackages.size(), agent);
                 return;
             }
 
@@ -155,27 +161,6 @@ class SmithProtocol implements Protocol {
         if(recivedBytes.size() > 0)
         StateManager.instance().ReceiverProvideBytes(recivedBytes);
 
-        if(isClientDisconneted)
-            return;
-        else
-            return;
-    }
-
-    public StateManager.RETURN_CODE Resend() {
-
-        packageList.get(errorPackage).flag.Resended = true;
-
-        for(int i = errorPackage; i < packageList.size(); ++i)
-        {
-            try {
-                stream.output.write(packageList.get(i).getBytes());
-                stream.output.flush();
-            } catch (IOException e) {
-                errorPackage = i;
-                e.printStackTrace();
-
-            }
-        }
-        return StateManager.RETURN_CODE.SendOK;
+        recivedPackages.clear();
     }
 }
