@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class SmithProtocol implements Protocol {
+class SmithProtocol implements Protocol, AgentLeavedHandler {
 
     private Agent agent;
     private NetworkStream stream;
@@ -76,11 +76,6 @@ class SmithProtocol implements Protocol {
             }
             packageList.clear();
         }
-    }
-
-    public void Disconnect()
-    {
-
     }
 
     @Override
@@ -158,5 +153,10 @@ class SmithProtocol implements Protocol {
         StateManager.instance().ReceiverProvideBytes(recivedBytes);
 
         recivedPackages.clear();
+    }
+
+    @Override
+    public void AgentLeaved(Agent agent) {
+        Send();
     }
 }
