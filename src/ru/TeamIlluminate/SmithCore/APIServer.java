@@ -24,4 +24,8 @@ public class APIServer {
             host.stop();
     }
 
+    public void subcribeHandler(CoreEventHandler handler) {
+        StateManager.instance().subcribeHandler(handler);
+    }
+
 }
