@@ -6,6 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.*;
+import ru.TeamIlluminate.SmithCore.CoreEventHandler.*;
 
 class CoreEventSystem {
     private HashMap<Class<? extends CoreEventHandler>, List<CoreEventHandler>> subscribers = new HashMap<>();
@@ -94,14 +95,3 @@ class CoreEventSystem {
 @interface EventMethod{
     Class<? extends CoreEventHandler> typeEvent() default CoreEventHandler.class;
 }
-
-interface CoreEventHandler {}
-interface AgentDisconnectedHandler extends CoreEventHandler { void AgentDisconnected(Agent agent); }
-interface AgentLeavedHandler extends CoreEventHandler { void AgentLeaved(Agent agent); }
-interface AgentReconnectHandler extends CoreEventHandler { void AgentReconnected(Agent agent); }
-interface BytesRecievedHandler extends CoreEventHandler { void BytesRecived(ArrayList<Byte> bytes); }
-interface CommunicationExceptionHandler extends CoreEventHandler { void CommunicationException(String message); }
-interface ReconnectThreadExceptionHandler extends CoreEventHandler  { void ReconnectThreadException(String message); }
-interface HostConnectioTimeoutHandler extends CoreEventHandler { void HostConnectionTimeout(); }
-interface HostAcceptedNewAgent extends CoreEventHandler { void HostAcceptedNewAgent(ServerAgent agent); }
-interface HostAcceptedReconnect extends CoreEventHandler { void HostAcceptedReconnect(ServerAgent agent); }

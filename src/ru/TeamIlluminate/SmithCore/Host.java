@@ -7,7 +7,7 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import ru.TeamIlluminate.SmithCore.StateManager.RETURN_CODE;
 
-class Host implements AgentLeavedHandler {
+class Host implements CoreEventHandler.AgentLeavedHandler {
     private ServerSocket serverSocket;
     private ArrayList<ServerAgent> agentList = new ArrayList<>();
     private Validator validator;

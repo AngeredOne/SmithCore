@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class SmithProtocol implements Protocol, AgentLeavedHandler {
+class SmithProtocol implements Protocol, CoreEventHandler.AgentLeavedHandler {
 
     private Agent agent;
     private NetworkStream stream;

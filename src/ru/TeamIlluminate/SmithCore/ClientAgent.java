@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.net.SocketAddress;
 
-class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHandler {
+class ClientAgent extends Agent implements CoreEventHandler.AgentLeavedHandler, CoreEventHandler.AgentReconnectHandler {
 
     private Socket socket;
     private SocketAddress serverAddress;
