@@ -10,7 +10,6 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
     private Agent agent;
     private NetworkStream stream;
     private List<SmithPackage> packageList;
-    private ArrayList<SmithPackage> recivedPackages;
     private int errorPackage = -1;
 
     public SmithProtocol(NetworkStream _stream, Agent agent)
