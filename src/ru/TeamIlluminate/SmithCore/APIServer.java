@@ -3,6 +3,7 @@ package ru.TeamIlluminate.SmithCore;
 public class APIServer {
 
     private static int max_Timeout = 180;
+    Host host = new Host();
 
     public static int getTimeout()
     {
@@ -13,8 +14,14 @@ public class APIServer {
     {
         this.max_Timeout = max_Timeout;
         if(SafeTransaction) {
-            new Host(port, max_Timeout).start();
+            host.start(port);
         }
+    }
+
+    public void StopHost(boolean SafeTransaction)
+    {
+        if(SafeTransaction)
+            host.stop();
     }
 
 }

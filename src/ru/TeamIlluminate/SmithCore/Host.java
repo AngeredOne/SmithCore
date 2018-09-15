@@ -14,35 +14,38 @@ class Host implements AgentLeavedHandler {
     private ClientsListener listener;
     private boolean isStarted = false;
 
-     Host(int port, int timeout) {
-       try {
-           serverSocket = new ServerSocket(port);
-           serverSocket.setSoTimeout(timeout);
-           validator = new Validator();
-           StateManager.instance().subcribeHandler(this);
-       } catch (IOException e) {
-           e.printStackTrace();
-       }
+    Host() {
+        validator = new Validator();
+        StateManager.instance().subcribeHandler(this);
     }
 
-     boolean start() {
-        if (!isStarted) {
-            isStarted = true;
-            listener = new ClientsListener();
-            listener.run();
-            return true;
-        }
-        return false;
+     void start(int port) {
+         try {
+             serverSocket = new ServerSocket(port);
+             if (!isStarted) {
+                 isStarted = true;
+                 listener = new ClientsListener();
+                 listener.run();
+             }
+             else
+             {
+                 //Уведомить о попытке запуска запущенного
+             }
+         } catch (IOException e) {
+             e.printStackTrace(); //тут нужно сделать вывод ивента и ивент сам.
+         }
     }
 
-     boolean stop() {
+     void stop() {
         if (isStarted) {
             agentList.clear();
             isStarted = false;
-            listener.isActive = false;
-            return true;
+            listener.interrupt();
         }
-        return false;
+        else
+        {
+            //Ивент что останавливаем остановленное
+        }
     }
 
      boolean dropAgent(Socket required) {
