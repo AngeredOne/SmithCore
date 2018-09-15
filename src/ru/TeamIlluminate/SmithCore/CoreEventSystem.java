@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.*;
 
-public class CoreEventSystem {
+class CoreEventSystem {
     private HashMap<Class<? extends CoreEventHandler>, List<CoreEventHandler>> subscribers = new HashMap<>();
 
     CoreEventSystem() {
@@ -22,7 +22,7 @@ public class CoreEventSystem {
         }
     }
 
-    public void subscribe(CoreEventHandler sub) {
+     void subscribe(CoreEventHandler sub) {
         for (Class<? extends CoreEventHandler> classType : subscribers.keySet()) {
             if (classType.isAssignableFrom(sub.getClass())) {
                 subscribers.get(classType).add(sub);

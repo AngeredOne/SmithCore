@@ -8,7 +8,7 @@ class ServerAgent extends Agent {
     private ReconnectSystem rSys;
     private Socket socket;
 
-    public ServerAgent(String UID, Socket socket){
+     ServerAgent(String UID, Socket socket){
         super(UID);
 
         this.socket = socket;
@@ -18,13 +18,13 @@ class ServerAgent extends Agent {
         } catch (IOException ex) {}
     }
 
-     public void AgentDisconnected()
+      void AgentDisconnected()
      {
          new ReconnectSystem(this).start();
      }
 
 
-    public Socket getAgentSocket()
+     Socket getAgentSocket()
     {
         return this.socket;
     }
@@ -35,7 +35,7 @@ class ServerAgent extends Agent {
         private ServerAgent agent = null;
         private int timeOut = 0;
 
-        public ReconnectSystem(ServerAgent agent)
+         ReconnectSystem(ServerAgent agent)
         {
             this.agent = agent;
             timeOut = 0;
@@ -43,7 +43,7 @@ class ServerAgent extends Agent {
 
 
         @Override
-        public void run()
+         void run()
         {
             connectHandler();
         }

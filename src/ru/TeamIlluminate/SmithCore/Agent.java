@@ -2,19 +2,19 @@ package ru.TeamIlluminate.SmithCore;
 
 import java.net.Socket;
 
-public abstract class Agent {
+ abstract class Agent {
 
     protected Protocol protocol;
     protected String UID;
 
-    public Boolean isConnected;
+     Boolean isConnected;
 
-    public Agent(String UID)
+     Agent(String UID)
     {
         this.UID = UID;
     }
 
-    public void InitRecieve() {
+     void InitRecieve() {
         protocol.Receive();
     }
 

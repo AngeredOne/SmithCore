@@ -1,6 +1,6 @@
 package ru.TeamIlluminate.SmithCore;
 
-public class APIServer {
+ class APIServer {
 
-    public static int max_Timeout = 180;
+     static int max_Timeout = 180;
 }

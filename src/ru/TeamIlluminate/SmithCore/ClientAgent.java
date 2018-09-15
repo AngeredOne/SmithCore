@@ -8,13 +8,13 @@ class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHan
 
     private Socket socket;
     private SocketAddress serverAddress;
-    public ClientAgent() {
+     ClientAgent() {
         super("");
         StateManager.instance().subcribeHandler(this);
         socket = new Socket();
     }
 
-    public void connect(SocketAddress serverAddress) {
+     void connect(SocketAddress serverAddress) {
 
         this.serverAddress = serverAddress;
 
@@ -26,12 +26,12 @@ class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHan
     }
 
     @Override
-    public void AgentLeaved(Agent agent) {
+     void AgentLeaved(Agent agent) {
         new ReconnectSystem(this).start();
     }
 
     @Override
-    public void AgentReconnected(Agent agent) {
+     void AgentReconnected(Agent agent) {
         isConnected = true;
     }
 
@@ -41,7 +41,7 @@ class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHan
         private ClientAgent agent = null;
         private int timeOut = 0;
 
-        public ReconnectSystem(ClientAgent agent)
+         ReconnectSystem(ClientAgent agent)
         {
             this.agent = agent;
             timeOut = 0;
@@ -49,7 +49,7 @@ class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHan
 
 
         @Override
-        public void run()
+         void run()
         {
             connectHandler();
         }

@@ -14,7 +14,7 @@ class Host implements AgentLeavedHandler {
     private ClientsListener listener;
     private boolean isStarted = false;
 
-    public Host(int port, int timeout) {
+     Host(int port, int timeout) {
        try {
            serverSocket = new ServerSocket(port);
            serverSocket.setSoTimeout(timeout);
@@ -25,7 +25,7 @@ class Host implements AgentLeavedHandler {
        }
     }
 
-    public boolean start() {
+     boolean start() {
         if (!isStarted) {
             isStarted = true;
             listener = new ClientsListener();
@@ -35,7 +35,7 @@ class Host implements AgentLeavedHandler {
         return false;
     }
 
-    public boolean stop() {
+     boolean stop() {
         if (isStarted) {
             agentList.clear();
             isStarted = false;
@@ -45,7 +45,7 @@ class Host implements AgentLeavedHandler {
         return false;
     }
 
-    public boolean dropAgent(Socket required) {
+     boolean dropAgent(Socket required) {
         ServerAgent agentToRemove = agentList.stream().filter(agent -> agent.getAgentSocket() == required).findFirst().get();
         if (agentToRemove instanceof ServerAgent) {
             StateManager.instance().AgentDisconnected(agentToRemove, true);
@@ -53,19 +53,19 @@ class Host implements AgentLeavedHandler {
         } else return false;
     }
 
-    public ServerAgent getAgent(Socket required) {
+     ServerAgent getAgent(Socket required) {
         return agentList.stream().filter(agent -> agent.getAgentSocket() == required).findFirst().get();
     }
 
     @Override
-    public void AgentLeaved(Agent agent) {
+     void AgentLeaved(Agent agent) {
         agentList.stream().filter(agentFromList -> agentFromList == agent).findFirst().get();
     }
 
     class ClientsListener extends Thread {
-        public boolean isActive = true;
+         boolean isActive = true;
         @Override
-        public void run() {
+         void run() {
             while (isActive) {
                 try {
                     Socket inSocket = serverSocket.accept();

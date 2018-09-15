@@ -1,13 +1,13 @@
 package ru.TeamIlluminate.SmithCore;
 
-public class FlagByte {
+ class FlagByte {
 
-    public boolean Disconnect = false;
-    public boolean Resended = false;
-    public boolean EndTransmission = false;
-    public byte pSize = 0;
+     boolean Disconnect = false;
+     boolean Resended = false;
+     boolean EndTransmission = false;
+     byte pSize = 0;
 
-    public byte[] getBytes()
+     byte[] getBytes()
     {
         byte[] bytes = new byte[4];
         bytes[0] = (byte) (Disconnect?1:0);
@@ -17,7 +17,7 @@ public class FlagByte {
         return bytes;
     }
 
-    public FlagByte getFlags(byte[] bytes)
+     FlagByte getFlags(byte[] bytes)
     {
         Disconnect = (bytes[0] == 1);
         Resended = (bytes[1] == 1);

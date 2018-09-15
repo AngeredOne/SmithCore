@@ -12,7 +12,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
     private List<SmithPackage> packageList;
     private int errorPackage = -1;
 
-    public SmithProtocol(NetworkStream _stream, Agent agent)
+    SmithProtocol(NetworkStream _stream, Agent agent)
     {
         this.stream = _stream;
         this.agent = agent;
@@ -58,7 +58,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
         return formedPackages;
     }
 
-    public void Send()
+    void Send()
     {
         if(packageList.size() > 0) {
             int sendBegin = 0;
@@ -78,7 +78,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
     }
 
     @Override
-    public void SendInit(Byte[] bytes) {
+     void SendInit(Byte[] bytes) {
 
         packageList = formPackages((bytes));
         packageList.get(packageList.size() - 1).flag.EndTransmission = true;
@@ -87,7 +87,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
     }
 
     @Override
-    public void Receive() {
+     void Receive() {
         new Reciever(this).start();
     }
 
@@ -97,12 +97,12 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
         ArrayList<SmithPackage> receivedPackages = new ArrayList<>();
 
         @Override
-        public void run()
+         void run()
         {
             Receive();
         }
 
-        public Reciever(Protocol protocol)
+         Reciever(Protocol protocol)
         {
             this.protocol = protocol;
         }
@@ -177,7 +177,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
     }
 
     @Override
-    public void AgentLeaved(Agent agent) {
+     void AgentLeaved(Agent agent) {
         Send();
     }
 }

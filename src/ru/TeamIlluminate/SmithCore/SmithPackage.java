@@ -4,12 +4,12 @@ import java.io.*;
 
 class SmithPackage {
 
-    public FlagByte flag = new FlagByte();
+     FlagByte flag = new FlagByte();
 
     //Max range - 63 bytes
-    public byte[] data = new byte[60];
+     byte[] data = new byte[60];
 
-    public SmithPackage()
+     SmithPackage()
     {
         //init package data by zero-bytes
         for(int i = 0; i < 60; ++i)
@@ -18,14 +18,14 @@ class SmithPackage {
         }
     }
 
-    public SmithPackage(FlagByte flag, byte[] data)
+     SmithPackage(FlagByte flag, byte[] data)
     {
         this.flag = flag;
         this.data = data;
     }
 
 
-    public byte[] getBytes()
+     byte[] getBytes()
     {
         byte[] unionArray = new byte[64];
         byte[] flags = flag.getBytes();
