@@ -88,7 +88,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
 
     @Override
     public void Receive() {
-        new Receiver(agent, this, stream).start();
+        new Reciever(agent, this, stream).start();
     }
 
     @Override
@@ -97,7 +97,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
     }
 }
 
-class Receiver extends Thread
+class Reciever extends Thread
 {
     Agent agent;
     Protocol protocol;
@@ -110,7 +110,7 @@ class Receiver extends Thread
         Receive();
     }
 
-    public Receiver(Agent agent, Protocol protocol, NetworkStream stream)
+    public Reciever(Agent agent, Protocol protocol, NetworkStream stream)
     {
         this.agent = agent;
         this.protocol = protocol;
