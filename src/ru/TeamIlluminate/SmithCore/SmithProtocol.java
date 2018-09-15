@@ -88,100 +88,96 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
 
     @Override
     public void Receive() {
-        new Reciever(agent, this, stream).start();
+        new Reciever(this).start();
+    }
+
+    class Reciever extends Thread
+    {
+        Protocol protocol;
+        ArrayList<SmithPackage> receivedPackages = new ArrayList<>();
+
+        @Override
+        public void run()
+        {
+            Receive();
+        }
+
+        public Reciever(Protocol protocol)
+        {
+            this.protocol = protocol;
+        }
+
+        void Receive()
+        {
+
+            ArrayList<SmithPackage> recPackages = new ArrayList<>();
+
+            ArrayList<Byte> recivedBytes = new ArrayList<>();
+
+            boolean isEndedTransmission = false;
+            boolean isClientDisconneted = false;
+
+            while (!isEndedTransmission & isClientDisconneted)
+            {
+                byte[] buffer = new byte[64];
+                try {
+                    stream.input.read(buffer);
+                } catch (IOException e) {
+                    StateManager.instance().CommunicationException(e.getMessage(), protocol, recPackages.size(), agent);
+                    return;
+                }
+
+                FlagByte flags = new FlagByte().getFlags(Arrays.copyOfRange(buffer, 0, 3));
+                byte[] data = Arrays.copyOfRange(buffer, 4, 63);
+
+
+                if(flags.Disconnect)
+                {
+                    isClientDisconneted = true;
+                    isEndedTransmission = true;
+                }
+                else if(flags.Resended)
+                {
+                    recPackages = receivedPackages;
+                    //Это всё, потому что вставляем коллекцию наших уже полученных пакетов и, начиная с этого пакета продолжаем собирать эту коллекцию.
+                }
+                else if(flags.EndTransmission)
+                {
+                    int bytesCount = flags.pSize;
+                    Byte[] lastBytes = new Byte[bytesCount];
+
+                    for(int i = 0; i < bytesCount; ++i)
+                    {
+                        lastBytes[i] = buffer[i];
+                    }
+
+                    recivedBytes.addAll(Arrays.asList(lastBytes));
+                    isEndedTransmission = true;
+                    break;
+                }
+
+                recPackages.add(new SmithPackage(flags, data));
+
+                Byte[] dataBytes = new Byte[60];
+
+                //Say HELLO JAVA here, `cuz we need place some idiot code here 4r provide byte => Byte convertation (|-_-|)
+                for(int i = 0; i < data.length; ++i)
+                {
+                    dataBytes[i] = data[i];
+                }
+
+                recivedBytes.addAll(Arrays.asList(dataBytes));
+
+                if(recivedBytes.size() > 0)
+                    StateManager.instance().ReceiverProvideBytes(recivedBytes);
+                receivedPackages.clear();
+            }
+            currentThread().interrupt();
+        }
     }
 
     @Override
     public void AgentLeaved(Agent agent) {
         Send();
-    }
-}
-
-class Reciever extends Thread
-{
-    Agent agent;
-    Protocol protocol;
-    NetworkStream stream;
-    ArrayList<SmithPackage> receivedPackages = new ArrayList<>();
-
-    @Override
-    public void run()
-    {
-        Receive();
-    }
-
-    public Reciever(Agent agent, Protocol protocol, NetworkStream stream)
-    {
-        this.agent = agent;
-        this.protocol = protocol;
-        this.stream = stream;
-    }
-
-    void Receive()
-    {
-
-        ArrayList<SmithPackage> recPackages = new ArrayList<>();
-
-        ArrayList<Byte> recivedBytes = new ArrayList<>();
-
-        boolean isEndedTransmission = false;
-        boolean isClientDisconneted = false;
-
-        while (!isEndedTransmission & isClientDisconneted)
-        {
-            byte[] buffer = new byte[64];
-            try {
-                stream.input.read(buffer);
-            } catch (IOException e) {
-                StateManager.instance().CommunicationException(e.getMessage(), protocol, recPackages.size(), agent);
-                return;
-            }
-
-            FlagByte flags = new FlagByte().getFlags(Arrays.copyOfRange(buffer, 0, 3));
-            byte[] data = Arrays.copyOfRange(buffer, 4, 63);
-
-
-            if(flags.Disconnect)
-            {
-                isClientDisconneted = true;
-                isEndedTransmission = true;
-            }
-            else if(flags.Resended)
-            {
-                recPackages = receivedPackages;
-                //Это всё, потому что вставляем коллекцию наших уже полученных пакетов и, начиная с этого пакета продолжаем собирать эту коллекцию.
-            }
-            else if(flags.EndTransmission)
-            {
-                int bytesCount = flags.pSize;
-                Byte[] lastBytes = new Byte[bytesCount];
-
-                for(int i = 0; i < bytesCount; ++i)
-                {
-                    lastBytes[i] = buffer[i];
-                }
-
-                recivedBytes.addAll(Arrays.asList(lastBytes));
-                isEndedTransmission = true;
-                break;
-            }
-
-            recPackages.add(new SmithPackage(flags, data));
-
-            Byte[] dataBytes = new Byte[60];
-
-            //Say HELLO JAVA here, `cuz we need place some idiot code here 4r provide byte => Byte convertation (|-_-|)
-            for(int i = 0; i < data.length; ++i)
-            {
-                dataBytes[i] = data[i];
-            }
-
-            recivedBytes.addAll(Arrays.asList(dataBytes));
-
-            if(recivedBytes.size() > 0)
-                StateManager.instance().ReceiverProvideBytes(recivedBytes);
-            receivedPackages.clear();
-        }
-        currentThread().interrupt();
     }
 }
