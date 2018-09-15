@@ -1,6 +1,20 @@
 package ru.TeamIlluminate.SmithCore;
 
- class APIServer {
+public class APIServer {
 
-     static int max_Timeout = 180;
+    private static int max_Timeout = 180;
+
+    public static int getTimeout()
+    {
+        return max_Timeout;
+    }
+
+    public void StartHost(int port, int max_Timeout, boolean SafeTransaction)
+    {
+        this.max_Timeout = max_Timeout;
+        if(SafeTransaction) {
+            new Host(port, max_Timeout).start();
+        }
+    }
+
 }

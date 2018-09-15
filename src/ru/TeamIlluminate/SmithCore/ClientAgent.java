@@ -26,12 +26,12 @@ class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHan
     }
 
     @Override
-     void AgentLeaved(Agent agent) {
+     public void AgentLeaved(Agent agent) {
         new ReconnectSystem(this).start();
     }
 
     @Override
-     void AgentReconnected(Agent agent) {
+    public void AgentReconnected(Agent agent) {
         isConnected = true;
     }
 
@@ -49,7 +49,7 @@ class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHan
 
 
         @Override
-         void run()
+        public void run()
         {
             connectHandler();
         }
@@ -57,7 +57,7 @@ class ClientAgent extends Agent implements AgentLeavedHandler, AgentReconnectHan
         private void connectHandler()
         {
             while(!agent.isConnected) {
-                if (timeOut < APIServer.max_Timeout * 5) // timeOut = 5 equals 1 second
+                if (timeOut < APIServer.getTimeout() * 5) // timeOut = 5 equals 1 second
                 {
                     timeOut++;
                     try {

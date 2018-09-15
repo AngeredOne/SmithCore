@@ -43,7 +43,7 @@ class ServerAgent extends Agent {
 
 
         @Override
-         void run()
+        public void run()
         {
             connectHandler();
         }
@@ -51,7 +51,7 @@ class ServerAgent extends Agent {
         private void connectHandler()
         {
             while(!agent.isConnected) {
-                if (timeOut < APIServer.max_Timeout * 5) // timeOut = 5 equals 1 second
+                if (timeOut < APIServer.getTimeout() * 5) // timeOut = 5 equals 1 second
                 {
                     timeOut++;
                     try {
