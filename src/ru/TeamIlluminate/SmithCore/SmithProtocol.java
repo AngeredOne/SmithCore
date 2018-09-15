@@ -89,6 +89,37 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
 
     @Override
     public void Receive() {
+        new Receiver(agent, this, stream).start();
+    }
+
+    @Override
+    public void AgentLeaved(Agent agent) {
+        Send();
+    }
+}
+
+class Receiver extends Thread
+{
+    Agent agent;
+    Protocol protocol;
+    NetworkStream stream;
+    ArrayList<SmithPackage> receivedPackages = new ArrayList<>();
+
+    @Override
+    public void run()
+    {
+        Receive();
+    }
+
+    public Receiver(Agent agent, Protocol protocol, NetworkStream stream)
+    {
+        this.agent = agent;
+        this.protocol = protocol;
+        this.stream = stream;
+    }
+
+    void Receive()
+    {
 
         ArrayList<SmithPackage> recPackages = new ArrayList<>();
 
@@ -103,7 +134,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
             try {
                 stream.input.read(buffer);
             } catch (IOException e) {
-                StateManager.instance().CommunicationException(e.getMessage(), this, recPackages.size(), agent);
+                StateManager.instance().CommunicationException(e.getMessage(), protocol, recPackages.size(), agent);
                 return;
             }
 
@@ -118,7 +149,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
             }
             else if(flags.Resended)
             {
-                recPackages = recivedPackages;
+                recPackages = receivedPackages;
                 //Это всё, потому что вставляем коллекцию наших уже полученных пакетов и, начиная с этого пакета продолжаем собирать эту коллекцию.
             }
             else if(flags.EndTransmission)
@@ -147,16 +178,11 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
             }
 
             recivedBytes.addAll(Arrays.asList(dataBytes));
+
+            if(recivedBytes.size() > 0)
+                StateManager.instance().ReceiverProvideBytes(recivedBytes);
+            receivedPackages.clear();
         }
-
-        if(recivedBytes.size() > 0)
-        StateManager.instance().ReceiverProvideBytes(recivedBytes);
-
-        recivedPackages.clear();
-    }
-
-    @Override
-    public void AgentLeaved(Agent agent) {
-        Send();
+        currentThread().interrupt();
     }
 }
