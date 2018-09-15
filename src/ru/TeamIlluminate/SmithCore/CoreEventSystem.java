@@ -3,6 +3,8 @@ package ru.TeamIlluminate.SmithCore;
 import com.sun.security.ntlm.Server;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.lang.reflect.Method;
 import java.util.*;
@@ -24,7 +26,7 @@ public class CoreEventSystem {
 
     public void subscribe(CoreEventHandler sub) {
         for (Class<? extends CoreEventHandler> classType : subscribers.keySet()) {
-            if (sub.getClass().equals(classType)) {
+            if (classType.isAssignableFrom(sub.getClass())) {
                 subscribers.get(classType).add(sub);
             }
         }
@@ -71,20 +73,25 @@ public class CoreEventSystem {
 
     @EventMethod(typeEvent = AgentLeavedHandler.class)
     void AgentLeave(Agent agent) {
-
+        for (CoreEventHandler handler : subscribers.get(AgentLeavedHandler.class))
+            ((AgentLeavedHandler) handler).AgentLeaved(agent);
     }
 
     @EventMethod(typeEvent = CommunicationExceptionHandler.class)
     void CommunicationException(String message) {
-
+        for (CoreEventHandler handler : subscribers.get(CommunicationExceptionHandler.class))
+            ((CommunicationExceptionHandler) handler).CommunicationException(message);
     }
 
     @EventMethod(typeEvent = ReconnectThreadExceptionHandler.class)
     void ReconnectThreadException(String message) {
-
+        for (CoreEventHandler handler : subscribers.get(ReconnectThreadExceptionHandler.class))
+            ((ReconnectThreadExceptionHandler) handler).ReconnectThreadException(message);
     }
 
 }
+
+@Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @interface EventMethod{
     Class<? extends CoreEventHandler> typeEvent() default CoreEventHandler.class;
@@ -96,7 +103,7 @@ interface AgentLeavedHandler extends CoreEventHandler { void AgentLeaved(Agent a
 interface AgentReconnectHandler extends CoreEventHandler { void AgentReconnected(Agent agent); }
 interface BytesRecievedHandler extends CoreEventHandler { void BytesRecived(ArrayList<Byte> bytes); }
 interface CommunicationExceptionHandler extends CoreEventHandler { void CommunicationException(String message); }
-interface ReconnectThreadExceptionHandler extends CoreEventHandler  { void ReconnectThreadException(); }
+interface ReconnectThreadExceptionHandler extends CoreEventHandler  { void ReconnectThreadException(String message); }
 interface HostConnectioTimeoutHandler extends CoreEventHandler { void HostConnectionTimeout(); }
 interface HostAcceptedNewAgent extends CoreEventHandler { void HostAcceptedNewAgent(ServerAgent agent); }
 interface HostAcceptedReconnect extends CoreEventHandler { void HostAcceptedReconnect(ServerAgent agent); }

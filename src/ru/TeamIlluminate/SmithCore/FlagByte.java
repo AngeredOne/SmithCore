@@ -1,8 +1,5 @@
 package ru.TeamIlluminate.SmithCore;
 
-import com.sun.javafx.scene.layout.region.Margins;
-import com.sun.xml.internal.ws.commons.xmlutil.Converter;
-
 public class FlagByte {
 
     public boolean Disconnect = false;

@@ -1,7 +1,5 @@
 package ru.TeamIlluminate.SmithCore;
 
-import jdk.nashorn.internal.objects.annotations.Constructor;
-
 import java.net.Socket;
 
 public abstract class Agent {
@@ -19,7 +17,7 @@ public abstract class Agent {
     public void InitSend(Byte[] data) {
         StateManager.RETURN_CODE code = protocol.Send(data);
         if (code == StateManager.RETURN_CODE.SendException) {
-            StateManager.instance().eventSystem.AgentDisconnected(this, false);
+            StateManager.instance().AgentDisconnected(this, false);
         }
     }
 

@@ -1,8 +1,5 @@
 package ru.TeamIlluminate.SmithCore;
 
-import com.sun.javafx.scene.layout.region.Margins;
-import com.sun.xml.internal.ws.commons.xmlutil.Converter;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +59,6 @@ class SmithProtocol implements Protocol {
         return formedPackages;
     }
 
-    @EventMethod(typeEvent = AgentReconnectHandler.class)
     public void Send()
     {
         if(packageList.size() > 0) {
