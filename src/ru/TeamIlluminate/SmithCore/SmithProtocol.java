@@ -78,7 +78,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
     }
 
     @Override
-     void SendInit(Byte[] bytes) {
+    public void SendInit(Byte[] bytes) {
 
         packageList = formPackages((bytes));
         packageList.get(packageList.size() - 1).flag.EndTransmission = true;
@@ -87,7 +87,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
     }
 
     @Override
-     void Receive() {
+    public void Receive() {
         new Reciever(this).start();
     }
 
@@ -97,7 +97,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
         ArrayList<SmithPackage> receivedPackages = new ArrayList<>();
 
         @Override
-         void run()
+        public void run()
         {
             Receive();
         }
@@ -177,7 +177,7 @@ class SmithProtocol implements Protocol, AgentLeavedHandler {
     }
 
     @Override
-     void AgentLeaved(Agent agent) {
+    public void AgentLeaved(Agent agent) {
         Send();
     }
 }

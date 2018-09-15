@@ -58,14 +58,14 @@ class Host implements AgentLeavedHandler {
     }
 
     @Override
-     void AgentLeaved(Agent agent) {
+    public void AgentLeaved(Agent agent) {
         agentList.stream().filter(agentFromList -> agentFromList == agent).findFirst().get();
     }
 
     class ClientsListener extends Thread {
          boolean isActive = true;
         @Override
-         void run() {
+        public void run() {
             while (isActive) {
                 try {
                     Socket inSocket = serverSocket.accept();
