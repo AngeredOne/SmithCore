@@ -62,7 +62,7 @@ class Host implements CoreEventHandler.AgentLeavedHandler {
 
     @Override
     public void AgentLeaved(Agent agent) {
-        agentList.stream().filter(agentFromList -> agentFromList == agent).findFirst().get();
+        agentList.stream().filter(agentFromList -> agentFromList == agent).findFirst().get().AgentDisconnected();
     }
 
     class ClientsListener extends Thread {

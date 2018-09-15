@@ -1,5 +1,7 @@
 package ru.TeamIlluminate.SmithCore;
 
+import java.net.Socket;
+
 public class APIServer {
 
     private static int max_Timeout = 180;
@@ -26,6 +28,17 @@ public class APIServer {
 
     public void subcribeHandler(CoreEventHandler handler) {
         StateManager.instance().subcribeHandler(handler);
+    }
+
+    public void Send(Socket client, Byte[] bytes)
+    {
+        host.getAgent(client).protocol.SendInit(bytes);
+    }
+
+    public void Kick(Socket socket)
+    {
+        if(host != null) host.dropAgent(socket);
+        else; //Вывести ивент что дев - гей, и вообще так не поступают
     }
 
 }

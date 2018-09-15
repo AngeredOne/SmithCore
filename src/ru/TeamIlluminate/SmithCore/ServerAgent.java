@@ -5,7 +5,6 @@ import java.net.Socket;
 
 class ServerAgent extends Agent {
 
-    private ReconnectSystem rSys;
     private Socket socket;
 
      ServerAgent(String UID, Socket socket){
@@ -15,7 +14,12 @@ class ServerAgent extends Agent {
 
         try {
             protocol = new SmithProtocol(new NetworkStream(socket.getInputStream(), socket.getOutputStream()), this);
-        } catch (IOException ex) {}
+            protocol.Receive();
+        } catch (IOException ex)
+        {
+            StateManager.instance().AgentDisconnected(this, false);
+            new ReconnectSystem(this).start();
+        }
     }
 
       void AgentDisconnected()
