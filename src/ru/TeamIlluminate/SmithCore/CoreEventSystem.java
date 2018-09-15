@@ -1,7 +1,5 @@
 package ru.TeamIlluminate.SmithCore;
 
-import com.sun.security.ntlm.Server;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

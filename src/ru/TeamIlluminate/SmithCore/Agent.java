@@ -1,7 +1,5 @@
 package ru.TeamIlluminate.SmithCore;
 
-import jdk.nashorn.internal.objects.annotations.Constructor;
-
 import java.net.Socket;
 
 public abstract class Agent {

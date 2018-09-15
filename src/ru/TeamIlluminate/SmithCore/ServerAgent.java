@@ -3,10 +3,6 @@ package ru.TeamIlluminate.SmithCore;
 import java.io.IOException;
 import java.net.Socket;
 
-import ru.TeamIlluminate.SmithCore.StateManager.RETURN_CODE;
-
-import static ru.TeamIlluminate.SmithCore.StateManager.stateManager;
-
 class ServerAgent extends Agent {
 
     private ReconnectSystem rSys;
